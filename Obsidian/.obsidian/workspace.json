@@ -1,0 +1,210 @@
+{
+  "main": {
+    "id": "d1228b43204a4fa9",
+    "type": "split",
+    "children": [
+      {
+        "id": "39155e23c3381899",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "76cef0863b30b499",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "01_Planificacion_y_Tiempos/Cronograma_General.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Cronograma_General"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "0305555114e3c26a",
+    "type": "split",
+    "children": [
+      {
+        "id": "b211303038b13a8d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "4861713e71066904",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Explorador de archivos"
+            }
+          },
+          {
+            "id": "5bae0deea4c9048f",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Buscar"
+            }
+          },
+          {
+            "id": "96ca941983ca96d1",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-bookmark",
+              "title": "Marcadores"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "701eb39c531d1029",
+    "type": "split",
+    "children": [
+      {
+        "id": "6b7c46d8377dbe83",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "4d745156007dcc86",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Enlaces entrantes"
+            }
+          },
+          {
+            "id": "629ca6d0e41ce473",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Enlaces salientes"
+            }
+          },
+          {
+            "id": "c4821e82fd4de392",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Etiquetas"
+            }
+          },
+          {
+            "id": "5d28f225030cadd6",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "Todas las propiedades"
+            }
+          },
+          {
+            "id": "bdf9423032b37f30",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Esquema"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Abrir selector rápido": false,
+      "graph:Abrir vista gráfica": false,
+      "canvas:Crear nuevo lienzo": false,
+      "daily-notes:Abrir la nota de hoy": false,
+      "templates:Insertar plantilla": false,
+      "command-palette:Abrir paleta de comandos": false,
+      "bases:Crear nueva base": false
+    }
+  },
+  "active": "76cef0863b30b499",
+  "lastOpenFiles": [
+    "01_Planificacion_y_Tiempos/Tasks_Semanales.md",
+    "06_Negocio_y_Economia/Vision_y_Estrategia.md",
+    "06_Negocio_y_Economia/Modelo_Economico.md",
+    "05_Propuestas_y_Competencia/Nuevas_Propuestas.md",
+    "05_Propuestas_y_Competencia/Analisis_de_Competencia.md",
+    "04_Revisiones_y_Bitacora/documentacion_2026-08-24.md",
+    "03_Documentacion_Tecnica/Arquitectura_Backend.md",
+    "03_Documentacion_Tecnica/Hardware_y_Fisico.md",
+    "03_Documentacion_Tecnica/Infraestructura_y_Graficos.md",
+    "03_Documentacion_Tecnica/Integracion_Frontend.md",
+    "01_Planificacion_y_Tiempos/Cronograma_General.md",
+    "02_Documentacion_General/Explicacion_del_Proyecto.md",
+    "Bienvenido.md",
+    "06_Negocio_y_Economia",
+    "05_Propuestas_y_Competencia",
+    "04_Revisiones_y_Bitacora",
+    "03_Documentacion_Tecnica",
+    "02_Documentacion_General",
+    "01_Planificacion_y_Tiempos"
+  ]
+}

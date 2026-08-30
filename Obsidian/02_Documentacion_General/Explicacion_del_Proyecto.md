@@ -1,9 +1,21 @@
+---
+tags:
+  - general
+  - arquitectura
+  - iot
+  - edge-ai
+aliases:
+  - Documentación Principal
+  - Resumen Hub Agritech
+---
 # Hub Agritech Core - Documentación General
 
 ## 1. Resumen Ejecutivo y Visión del Producto
 **Hub Agritech Core** es una plataforma de IoT e IA para el sector agrícola (Edge AI). Su diseño responde a las exigencias del entorno agroindustrial bajo una premisa **Offline-First**, operando de manera autónoma sin dependencia de la nube para resolver carencias de conectividad en zonas rurales.
 
 El sistema se basa en una arquitectura agnóstica de microservicios, altamente escalable para soportar Big Data y análisis territorial (GIS). Aunque de momento obvia la IA directa, establece los cimientos (Function Calling, pgvector) para interconexión futura con Small Language Models (ej. Ollama).
+
+👉 **Ver también:** [[Arquitectura_Backend]], [[Hardware_y_Fisico]], [[Infraestructura_y_Graficos]]
 
 ## 2. Stack Tecnológico y Matriz de Licenciamiento Comercial
 Para asegurar cero costes de licenciamiento y evitar licencias "virales" (como AGPL o GPL enlazada) que comprometan el código propietario, se ha seleccionado el siguiente stack de código abierto permisivo:

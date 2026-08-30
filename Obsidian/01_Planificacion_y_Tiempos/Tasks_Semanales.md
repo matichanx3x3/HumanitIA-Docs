@@ -10,9 +10,9 @@
 - [x] Rutas Base.
 
 ## Semana 3: Scripts de Simulación MQTT y Workers (Actual)
-- [ ] **Crear el Emulador MQTT (Simulador de Sensores)**
+- [x] **Crear el Emulador MQTT (Simulador de Sensores)**
   Desarrollar un script en Python (ej. en `app/simulators/`) que publique datos JSON aleatorios/estructurados (humedad, temperatura, pH, nivel de suelo) en tópicos Mosquitto.
-- [ ] **Implementar el Worker de Ingesta**
+- [x] **Implementar el Worker de Ingesta**
   Actualizar `app/workers/mqtt_ingest.py` para suscribirse al broker MQTT, recibir *payloads* del simulador y procesarlos para persistencia en BD vía SQLAlchemy.
 
 ## Semana 4 (Próximamente)

@@ -1,3 +1,13 @@
+---
+tags:
+  - backend
+  - podman
+  - fastapi
+  - microservicios
+aliases:
+  - Backend
+  - API Core
+---
 # Arquitectura de Backend (Core Lógico)
 
 El software del Hub Central se orquesta utilizando **Podman** (licencia Apache 2.0), una tecnología daemonless que aísla cada proceso, mejora la seguridad y asegura la distribución comercial libre de regalías. Se estratifica en capas conectadas por redes virtuales.
@@ -24,6 +34,8 @@ El software del Hub Central se orquesta utilizando **Podman** (licencia Apache 2
 
 ### Capa 4: Presentación
 6. **Contenedor 6 - NGINX (Servidor Web):** Sirve archivos estáticos de la PWA offline (Vue) e imágenes fotográficas guardadas por el Worker Multimedia.
+
+👉 **Visualiza estas conexiones en:** [[Infraestructura_y_Graficos]]
 
 ---
 

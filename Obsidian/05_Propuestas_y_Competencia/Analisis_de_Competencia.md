@@ -8,5 +8,8 @@ Cuando ingreses una idea en `Nuevas_Propuestas.md`, investiga lo siguiente:
 - **Ventaja Competitiva (US):** ¿Cómo lo abordará Hub Agritech Core de forma más ligera, usando Edge AI, u ofreciendo mejor interfaz?
 - **Decisión Técnica:** Implementar / Posponer / Descartar.
 
+## Evaluaciones de Competencia (MOC)
+- 👉 [[Analisis_SWAN_Systems]] - *Análisis detallado de plataforma SaaS Cloud enfocada en predicción de riego.*
+
 ## Evaluaciones Pendientes
 - **Módulo predictivo basado en ML:** Revisar si existen herramientas *open source* en Python que podamos integrar directamente al `Worker de Ingesta`.

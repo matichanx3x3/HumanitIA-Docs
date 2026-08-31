@@ -15,6 +15,8 @@ El módulo LM2596 Step-Down (Buck Converter) es un regulador de voltaje que perm
 
 Esta variante específica cuenta con un **voltímetro digital integrado (pantalla LED)** que resulta extremadamente útil para monitorear en tiempo real tanto el voltaje de entrada (Vin) como el de salida (Vout) mediante un botón físico, facilitando el ajuste y diagnóstico en el campo sin necesidad de un multímetro externo.
 
+![LM2596 Voltímetro](assets/lm2596_voltimetro.png)
+
 ## 2. Datos Técnicos (Datasheet)
 - **Voltaje de Entrada (Vin):** 4.0V a 40V DC (El voltaje de entrada siempre debe ser al menos 1.5V mayor que el de salida deseado).
 - **Voltaje de Salida (Vout):** 1.3V a 37V DC (Ajustable mediante potenciómetro multivuelta).

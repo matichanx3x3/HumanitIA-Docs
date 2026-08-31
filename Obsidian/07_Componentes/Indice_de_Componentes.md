@@ -23,18 +23,22 @@ Este espacio está destinado a documentar exhaustivamente todo el hardware físi
 
 ### Alimentación y Regulación
 - [[Módulo_LM2596_Step_Down_Voltimetro|Módulo LM2596 DC-DC Step Down con Voltímetro LED]]
+- [[Módulo_MT3608_Step_Up|Módulo MT3608 DC-DC Step-Up (Boost) con USB Type-C]]
 
 ### Convertidores y Adaptadores
 - [[Módulo_TXS0108E_Conversor_Nivel|Convertidor de Nivel Lógico Bi-direccional TXS0108E (8 Canales)]]
+- [[Módulo_RS485_a_TTL_Auto_Flow|Módulo Conversor TTL a RS485 (HW-726 Auto Flow)]]
 
 ### Periféricos de Campo
 - [[Módulos de Relé de Estado Sólido]] (Para accionar válvulas)
 - [[Sensores de Suelo NPK y Humedad]] (Protocolo industrial RS485 / Modbus-RTU)
 - [[Batería LiFePO4 y Panel Solar]]
-- [[Cámaras ESP32-CAM o IP]] (Para nodos de visión)
+- [[Módulo_ESP32_CAM_OV3660|Kit ESP32-CAM (OV3660 + Placa USB-C)]]
+- [[Módulo_Sensor_Color_GY33|Módulo Sensor de Color GY-33 (TCS34725)]]
 
 ### Accesorios y Herramientas
 - [[Cables_Dupont_Jumpers|Cables Jumper Dupont (M-M, M-H, H-H)]]
+- [[Analizador_Lógico_24MHz|Analizador Lógico USB 24MHz (8 Canales)]]
 
 ---
 

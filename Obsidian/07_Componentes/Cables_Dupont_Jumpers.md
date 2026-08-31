@@ -28,18 +28,18 @@ Aunque eléctricamente todos los cables son idénticos por dentro, usar un códi
 
 A continuación, se recomienda una tabla de uso basada en convenciones estándar de electrónica:
 
-| Color del Cable | Uso Recomendado / Convención Común | Notas |
-| :--- | :--- | :--- |
-| **Rojo** | **Voltaje / VCC** (Ej: 3.3V, 5V, VIN) | *Nunca* lo uses para otra cosa para evitar cortocircuitos accidentales. |
-| **Negro** | **Tierra / GND** | Al igual que el rojo, reserva este color estrictamente para tierra. |
-| **Marrón** | Tierra alternativa / GND secundaria | En cables de servos, el marrón suele ser GND. |
-| **Amarillo** | Señales de datos (SDA), TX, o PWM | Muy usado para I2C (SDA) o líneas seriales de transmisión. |
-| **Naranja** | Señales de reloj (SCL), RX, o 3.3V (ATX) | En I2C suele usarse para SCL. En servos es la señal PWM. |
-| **Verde (Turquesa)** | Señales Analógicas, MISO, o RX | Buen color para lectura de sensores o líneas de recepción. |
-| **Azul** | Señales Analógicas, MOSI, o TX | Común en buses SPI y sensores. |
-| **Morado** | Señales misceláneas, Chip Select (CS) | Ideal para pines de control, Enable (EN) o interrupciones. |
-| **Gris** | Señales secundarias, Bus de datos | Apto para conexiones auxiliares. |
-| **Blanco** | Señal / Datos auxiliares | En algunos conectores y tiras LED, el blanco es la señal de datos. |
+| Color del Cable      | Uso Recomendado / Convención Común       | Notas                                                                   |
+| :------------------- | :--------------------------------------- | :---------------------------------------------------------------------- |
+| **Rojo**             | **Voltaje / VCC** (Ej: 3.3V, 5V, VIN)    | *Nunca* lo uses para otra cosa para evitar cortocircuitos accidentales. |
+| **Negro**            | **Tierra / GND**                         | Al igual que el rojo, reserva este color estrictamente para tierra.     |
+| **Marrón**           | Tierra alternativa / GND secundaria      | En cables de servos, el marrón suele ser GND.                           |
+| **Amarillo**         | Señales de datos (SDA), TX, o PWM        | Muy usado para I2C (SDA) o líneas seriales de transmisión.              |
+| **Naranja**          | Señales de reloj (SCL), RX, o 3.3V (ATX) | En I2C suele usarse para SCL. En servos es la señal PWM.                |
+| **Verde (Turquesa)** | Señales Analógicas, MISO, o RX           | Buen color para lectura de sensores o líneas de recepción.              |
+| **Azul**             | Señales Analógicas, MOSI, o TX           | Común en buses SPI y sensores.                                          |
+| **Morado**           | Señales misceláneas, Chip Select (CS)    | Ideal para pines de control, Enable (EN) o interrupciones.              |
+| **Gris**             | Señales secundarias, Bus de datos        | Apto para conexiones auxiliares.                                        |
+| **Blanco**           | Señal / Datos auxiliares                 | En algunos conectores y tiras LED, el blanco es la señal de datos.      |
 
 > [!TIP] Buenas Prácticas
 > Al armar tu prototipo Hub Agritech (por ejemplo, al conectar el módulo CP2102 al Heltec V4):

@@ -15,6 +15,8 @@ El TXS0108E es un conversor de niveles lógicos (logic level shifter) bi-direcci
 
 A diferencia de conversores más simples basados en MOSFETs, el chip TXS0108E detecta automáticamente la dirección de los datos (sin necesidad de un pin de control de dirección) y soporta velocidades de transmisión de datos mucho más altas, siendo compatible tanto con configuraciones push-pull (como SPI o UART) como open-drain (como I2C).
 
+![TXS0108E Convertidor de Nivel](assets/txs0108e.png)
+
 ## 2. Datos Técnicos (Datasheet)
 - **Voltaje del lado de baja tensión (VCCA):** 1.2V a 3.6V (Típicamente 3.3V del ESP32).
 - **Voltaje del lado de alta tensión (VCCB):** 1.65V a 5.5V (Típicamente 5V).

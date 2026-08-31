@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "07_Componentes/Analizador_Lógico_24MHz.md",
+                "file": "07_Componentes/Heltec_V4_LoRa32.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Analizador_Lógico_24MHz"
+              "title": "Heltec_V4_LoRa32"
             }
           }
         ]
@@ -188,8 +188,10 @@
   },
   "active": "7c860e15ac4da411",
   "lastOpenFiles": [
-    "07_Componentes/Módulo_Sensor_Color_GY33.md",
+    "02_Documentacion_General/Explicacion_del_Proyecto.md",
+    "02_Documentacion_General/Guia_Electronica_Basica.md",
     "07_Componentes/Analizador_Lógico_24MHz.md",
+    "07_Componentes/Módulo_Sensor_Color_GY33.md",
     "07_Componentes/assets/logic_analyzer_cable.jpg",
     "07_Componentes/assets/logic_analyzer.png",
     "07_Componentes/assets/gy33_tcs34725_back.png",
@@ -224,11 +226,9 @@
     "04_Revisiones_y_Bitacora/documentacion_2026-08-24.md",
     "Sin título.base",
     "Sin título.canvas",
-    "02_Documentacion_General/Explicacion_del_Proyecto.md",
     "06_Negocio_y_Economia/Vision_y_Estrategia.md",
     "06_Negocio_y_Economia/Modelo_Economico.md",
     "03_Documentacion_Tecnica/Integracion_Frontend.md",
-    "Bienvenido.md",
     "06_Negocio_y_Economia",
     "05_Propuestas_y_Competencia",
     "04_Revisiones_y_Bitacora",

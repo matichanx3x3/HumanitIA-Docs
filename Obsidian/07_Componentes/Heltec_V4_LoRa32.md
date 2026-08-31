@@ -46,8 +46,8 @@ Se incluyen dos tiras de pines macho que deben soldarse para usar en una protobo
 - **Pines de Poder:** `5V` (Entrada/Salida según el USB), `3V3` (Salida regulada 3.3V), `GND` (Masa común).
 - **Pines Libres (ADC/GPIO):** A la derecha encontramos pines como el `1, 2, 3, 4, 5, 6, 7` que están libres y son ideales para conectar las lecturas analógicas o digitales de los sensores de suelo.
 - **Pines Reservados (Evitar usarlos externamente):** 
-  - `GPIO 17, 18` -> Dedicados al I2C interno de la Pantalla OLED.
-  - `GPIO 8 al 14` -> Dedicados a la comunicación SPI con el chip LoRa.
+  - `GPIO 17, 18` -> Dedicados al I2C (_Inter-Integrated Circuit_ o circuito interintegrado) interno de la Pantalla OLED.
+  - `GPIO 8 al 14` -> Dedicados a la comunicación SPI(Serial Peripheral Interface) con el chip LoRa.
 
 *(Nota: Para programarla en Arduino IDE, debes descargar el paquete oficial de placas de Heltec para el ESP32).*
 ![[LORA42 v4 Pin Map.png]]

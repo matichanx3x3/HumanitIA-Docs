@@ -45,12 +45,16 @@ Basado en las imágenes del hardware adquirido, la placa presenta la siguiente d
 Se incluyen dos tiras de pines macho que deben soldarse para usar en una protoboard o PCB personalizada. Algunos pines clave de salida son:
 - **Pines de Poder:** `5V` (Entrada/Salida según el USB), `3V3` (Salida regulada 3.3V), `GND` (Masa común).
 - **Pines Libres (ADC/GPIO):** A la derecha encontramos pines como el `1, 2, 3, 4, 5, 6, 7` que están libres y son ideales para conectar las lecturas analógicas o digitales de los sensores de suelo.
-- **Pines Reservados (Evitar usarlos externamente):** 
-  - `GPIO 17, 18` -> Dedicados al I2C (_Inter-Integrated Circuit_ o circuito interintegrado) interno de la Pantalla OLED.
-  - `GPIO 8 al 14` -> Dedicados a la comunicación SPI(Serial Peripheral Interface) con el chip LoRa.
+- **Pines Reservados y Periféricos Internos:** 
+  - `GPIO 17` (SDA) y `GPIO 18` (SCL) -> Bus I2C interno de la Pantalla OLED SSD1315/SSD1306.
+  - `GPIO 21` -> Pin de Reset por hardware del OLED (`OLED_RST`).
+  - `GPIO 36` -> Control de alimentación `Vext_Ctrl` (**Active LOW**: poner en `LOW` para energizar la pantalla OLED y la etapa de RF).
+  - `GPIO 35` -> LED de usuario integrado (`LED_Write`, Active HIGH).
+  - `GPIO 8 al 14` -> Bus SPI y señales de control del chip LoRa SX1262 (`NSS: 8`, `SCK: 9`, `MOSI: 10`, `MISO: 11`, `RST: 12`, `BUSY: 13`, `DIO1: 14`).
+  - `GPIO 7` (`VFEM_Ctrl`), `GPIO 2` (`FEM_EN`), `GPIO 46` (`FEM_PA / CPS`) -> Control y alimentación del módulo Front-End amplificador (GC1109).
 
-*(Nota: Para programarla en Arduino IDE, debes descargar el paquete oficial de placas de Heltec para el ESP32).*
-![[LORA42 v4 Pin Map.png]]
+*(Nota: Para programarla en Arduino IDE o PlatformIO, recuerda que Vext debe estar en LOW para alimentar la pantalla).*
+![[assets/LORA42 v4 Pin Map.png]]
 ## 4. Recursos, Guías y Multimedia
 
 - **Documentación Oficial y Pinout Completo:** [Heltec WiFi LoRa 32 V4 Docs](https://docs.heltec.org/en/node/esp32/wifi_lora_32_v4/index.html)

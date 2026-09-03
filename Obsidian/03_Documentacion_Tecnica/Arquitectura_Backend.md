@@ -15,8 +15,9 @@ El software del Hub Central se orquesta utilizando **Podman** (licencia Apache 2
 ## Los 6 Microservicios Contenedorizados
 
 ### Capa 1: Comunicación e Ingesta
-1. **Contenedor 1 - Eclipse Mosquitto (Broker MQTT):** Recibe las tramas JSON del Gateway LoRa vía USB.
-2. **Contenedor 2 - Worker Ingesta (Python):** Demonio de fondo (Background Worker). Limpia el ruido eléctrico de las lecturas, normaliza datos y realiza escrituras por lotes (batch) hacia la BD.
+1. **Contenedor 1 - Eclipse Mosquitto (Broker MQTT):** Recibe las tramas JSON publicadas por los servicios locales.
+2. **Gateway Serial Listener (`lora_serial_listener.py`):** Script Python (`pyserial`) en el host que lee directamente por USB (puerto COM/tty) del Heltec receptor las tramas crudas P2P (RadioLib) y las inyecta como JSON a Mosquitto.
+3. **Contenedor 2 - Worker Ingesta (`mqtt_ingest.py`):** Demonio de fondo (Background Worker). Escucha Mosquitto, normaliza datos y realiza escrituras hacia la BD (PostgreSQL).
 3. **Contenedor 3 - Worker Multimedia (Bash/Python):** Capturador RTSP que extrae periódicamente fotogramas clave (keyframes) de las cámaras IP (ESP32-CAM) y los guarda en el FS local.
 
 ### Capa 2: Persistencia Multimodal (Data & GIS)

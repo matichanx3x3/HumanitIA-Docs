@@ -31,7 +31,7 @@ Este espacio está destinado a documentar exhaustivamente todo el hardware físi
 
 ### Periféricos de Campo
 - [[Módulos de Relé de Estado Sólido]] (Para accionar válvulas)
-- [[Sensores de Suelo NPK y Humedad]] (Protocolo industrial RS485 / Modbus-RTU)
+- [[Sensor_Suelo_7en1_RS485|Sensor de Suelo 7 en 1 (NPK, pH, EC, Temp, Humedad)]]
 - [[Batería LiFePO4 y Panel Solar]]
 - [[Módulo_ESP32_CAM_OV3660|Kit ESP32-CAM (OV3660 + Placa USB-C)]]
 - [[Módulo_Sensor_Color_GY33|Módulo Sensor de Color GY-33 (TCS34725)]]
@@ -42,10 +42,11 @@ Este espacio está destinado a documentar exhaustivamente todo el hardware físi
 
 ---
 
-## 2. Análisis de Brechas (Hardware Faltante)
-Evaluando los diagramas generados en la sección técnica (👉 [[Hardware_y_Fisico]]) frente a los módulos base, se identifica que **harán falta los siguientes componentes secundarios** para asegurar que el hardware funcione físicamente en el campo:
+## 2. Análisis de Brechas (Estado del Hardware)
+Evaluando los diagramas generados en la sección técnica (🗜️ [[Hardware_y_Fisico]]) frente a los módulos base, se identificaron los siguientes componentes secundarios críticos. **Actualización:** Gran parte de estas brechas ya han sido cubiertas.
 
-- **Convertidores UART/RS485 a TTL:** Dado que los sensores industriales de suelo usan RS485 (cables A y B), y el ESP32 trabaja con TTL (RX/TX), es estrictamente necesario un módulo conversor (como el MAX485) para que el ESP32 pueda "hablar" con el sensor de suelo.
-- **Módulos Reductores de Voltaje (Buck Converters):** Si el panel solar o la batería operan a 12V o 24V (lo cual es estándar para mover electroválvulas), necesitaremos conversores Step-Down (ej. LM2596 o MP1584) para bajar el voltaje a 5V o 3.3V de forma segura para alimentar los ESP32 sin quemarlos.
-- **Electroválvulas Solenoide (12V/24V DC):** El relé por sí solo es un interruptor. Se requiere comprar las llaves de paso físicas que cortarán el paso del agua.
-- **Cajas Estancas IP67 o IP68:** Enclosures plásticos con sellos de goma y pasacables impermeables (glándulas estopas) para evitar que la electrónica en el campo se dañe con la lluvia, el riego o la humedad matutina.
+- ~~**Convertidores UART/RS485 a TTL:**~~ **✅ RESUELTO:** Se adquirió el [[Módulo_RS485_a_TTL_Auto_Flow|Módulo HW-726 Auto-Flow]], que permite la comunicación directa entre el ESP32 y el Sensor de Suelo 7 en 1.
+- ~~**Adaptadores de Niveles Lógicos:**~~ **✅ RESUELTO:** Se adquirió el [[Módulo_TXS0108E_Conversor_Nivel|TXS0108E]] para asegurar la transición segura entre lógica de 3.3V y 5V sin dañar el ESP32.
+- ~~**Reguladores de Voltaje (Buck/Boost):**~~ **✅ RESUELTO:** Se dispone del reductor [[Módulo_LM2596_Step_Down_Voltimetro|LM2596]] (hasta 3A) para bajar voltajes solares/baterías grandes a 5V, y el elevador [[Módulo_MT3608_Step_Up|MT3608]] para subir de 3.7V/5V a 12V para actuadores.
+- **Electroválvulas Solenoide (12V/24V DC):** ❌ **FALTANTE:** El relé por sí solo es un interruptor. Se requiere comprar las llaves de paso físicas que cortarán el paso del agua.
+- **Cajas Estancas IP67 o IP68:** ❌ **FALTANTE:** Enclosures plásticos con sellos de goma y pasacables impermeables (glándulas estopas) para evitar que la electrónica en el campo se dañe con la lluvia, el riego o la humedad matutina.

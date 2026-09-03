@@ -56,3 +56,91 @@ hub_agritech_core/
 ├── docker-compose.yml 
 └── requirements.txt  
 ```
+
+---
+
+## Modelado de Datos: Diagrama Entidad-Relación (ERD)
+
+El siguiente esquema ilustra la relación en la base de datos PostgreSQL usando SQLAlchemy, mostrando cómo se integran las extensiones espaciales (PostGIS) y vectoriales (pgvector).
+
+```mermaid
+erDiagram
+    NODE ||--o{ TELEMETRY : "registra (1:N)"
+    PARCEL ||--o{ NODE : "contiene (1:N)"
+    DOCUMENT ||--o{ DOCUMENT_CHUNK : "divide_en (1:N)"
+
+    NODE {
+        int id PK
+        string mac_address "MAC de la placa LoRa"
+        string name "Ej: Nodo Norte 1"
+        string node_type "ESP32, Heltec V4"
+        geometry location "PostGIS Point"
+        boolean is_active
+    }
+    
+    TELEMETRY {
+        int id PK
+        int node_id FK
+        timestamp timestamp "Tiempo de ingesta"
+        float temperature "Temperatura ambiente"
+        float humidity "Humedad ambiente"
+        float soil_npk_n "Nitrógeno mg/kg"
+        float soil_npk_p "Fósforo mg/kg"
+        float soil_npk_k "Potasio mg/kg"
+        float soil_ph "pH del suelo"
+        float soil_ec "Conductividad Eléctrica"
+    }
+    
+    PARCEL {
+        int id PK
+        string name "Sector agrícola"
+        geometry boundary "PostGIS Polygon"
+        string crop_type "Tipo de cultivo"
+    }
+    
+    DOCUMENT {
+        int id PK
+        string title "Manual Agrícola / Datasheet"
+        string category
+    }
+    
+    DOCUMENT_CHUNK {
+        int id PK
+        int document_id FK
+        text content "Fragmento de texto"
+        vector embedding "pgvector (IA)"
+    }
+```
+
+---
+
+## Topología de Tópicos MQTT (Ingesta)
+
+El Worker MQTT y los dispositivos LoRa se comunican a través del broker utilizando el siguiente árbol jerárquico de tópicos:
+
+```mermaid
+flowchart LR
+    Root[Broker MQTT: 1883] --> S[sensors/]
+    Root --> A[actuators/]
+    Root --> H[health/]
+
+    S --> S_Nodes[MAC_NODO/]
+    S_Nodes --> S_T[telemetry]
+    S_Nodes --> S_E[events]
+    
+    A --> A_Nodes[MAC_NODO/]
+    A_Nodes --> A_R[relay]
+    A_Nodes --> A_S[sleep_config]
+    
+    H --> H_Nodes[MAC_NODO/]
+    H_Nodes --> H_B[battery]
+    H_Nodes --> H_S[status]
+
+    classDef root fill:#2b6cb0,stroke:#2a4365,color:#fff
+    classDef topic fill:#bee3f8,stroke:#3182ce,color:#000
+    classDef leaf fill:#ebf8ff,stroke:#2b6cb0,color:#000
+    
+    class Root root
+    class S,A,H topic
+    class S_Nodes,S_T,S_E,A_Nodes,A_R,A_S,H_Nodes,H_B,H_S leaf
+```

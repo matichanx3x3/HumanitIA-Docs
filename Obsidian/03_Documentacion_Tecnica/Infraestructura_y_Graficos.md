@@ -167,7 +167,7 @@ graph LR
         NGINX[Proxy Reverso y Servidor Estático]
         
         subgraph Archivos [Archivos Servidos]
-            UI[Aplicación PWA <br> React / Vue]
+            UI[Aplicación PWA <br> Vue 3]
             IMG[Imágenes y Videos <br> Cámaras IP]
         end
         

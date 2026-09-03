@@ -98,13 +98,15 @@ El soporte oficial para la V4 en PlatformIO a veces requiere una pequeña config
   -DARDUINO_USB_CDC_ON_BOOT=1
   ```
 
-### 4. Instalación de Meshtastic (Firmware Pre-compilado)
-La Heltec V4 es ideal para operar como nodo en la red Meshtastic y tiene soporte oficial, por lo que no es necesario compilar código:
-1. **Uso del Flasher Web:** Ingresa al flasher oficial en [flasher.meshtastic.org](https://flasher.meshtastic.org/) utilizando un navegador compatible (Chrome/Edge).
-2. **Selección del Dispositivo:** Escoge **"Heltec LoRa 32 V4"** en la lista de dispositivos soportados.
-3. **Flasheo:** Sigue los pasos en pantalla. En algunos casos será necesario mantener presionado el botón **"PRG"** o **"Boot"** al conectarla por USB para entrar en modo descarga.
-4. **Configuración Final:** Una vez flasheada, la placa creará un Punto de Acceso (AP) Wi-Fi y podrá conectarse vía Bluetooth desde la app Meshtastic en tu celular para definir el nombre del nodo, la región de LoRa, etc.
+### 4. Firmware Recomendado: LoRa Nativo P2P (RadioLib)
+Para el proyecto **Hub Agritech Core**, se ha decidido **NO utilizar Meshtastic** y optar por **LoRa Nativo P2P (Estrella)** mediante librerías estándar en C++ como **RadioLib**. 
 
-### Solución de Problemas (Troubleshooting)
-* **Error al flashear:** Cambia de cable USB o de puerto en tu PC. Si el error persiste, mantén presionado el botón "Boot" antes y durante el inicio del flasheo.
-* **Loop de reinicios (Hard Resetting):** Suele deberse a falta de corriente. Conecta la placa directamente al puerto USB de una PC de escritorio en lugar de un Hub.
+**¿Por qué no usamos Meshtastic?**
+- **Fricción con sensores Custom:** Meshtastic es un firmware de malla P2P cerrado (orientado a mensajería humana) que dificulta enormemente la integración directa de sensores industriales (como sondas RS485 Modbus, ADC, I2C) en el mismo bucle del microcontrolador.
+- **Sobrecarga de Protocolo:** Utiliza encriptación AES-256 y serialización Protobuf pesada, lo cual es innecesario para emitir telemetría simple hacia un gateway central.
+- **Deep Sleep Ineficiente:** El modo malla requiere que los nodos estén despertando constantemente para rutear paquetes ajenos, drenando las baterías de los nodos solares aislados.
+
+**Arquitectura Implementada:**
+1. **Nodos de Campo (ESP32):** Leen los sensores de suelo -> Empaquetan JSON/Binario -> Transmiten paquete LoRa P2P con RadioLib -> Entran en Deep Sleep profundo (< 20 µA).
+2. **Gateway (Heltec V4 en el Hub):** Conectado por USB al Mini PC. Ejecuta un firmware de recepción continua (C++) que lee los paquetes de la antena y los imprime por el puerto Serie.
+3. **Ingesta:** El script en el Mini PC lee el puerto Serie nativo y lo inyecta al broker MQTT.

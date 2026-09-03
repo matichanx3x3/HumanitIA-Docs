@@ -28,7 +28,8 @@ Equipos hiper-económicos y de muy bajo consumo distribuidos por las hectáreas.
 - **Nodos de Visión:** Cámaras IP independientes que transmiten vía Wi-Fi direccional al hub central.
 
 ## 3. Capa de Comunicación Inalámbrica (Sin Internet)
-- **Red LoRa (Larga Distancia):** Módulos RF (915 MHz en LATAM, 868 MHz en Europa). Envían datos a kilómetros de distancia con bajo consumo.
+- **Red LoRa (Larga Distancia - Nativo P2P):** Módulos RF (915 MHz en LATAM, 868 MHz en Europa). Envían datos a kilómetros de distancia con un consumo ultra bajo. 
+  - *Decisión Arquitectónica:* Se utiliza **LoRa Nativo Punto a Punto (P2P)** con la librería `RadioLib` en C++. **No se utiliza Meshtastic** debido a su alta sobrecarga de protocolo y dificultad para integrar lecturas directas de sensores industriales RS485 Modbus. El enfoque P2P permite a los nodos de campo entrar en Deep Sleep profundo y enviar telemetría directamente al Gateway (topología estrella).
 - **Bluetooth (Emergencia):** Integrado en nodos ESP32 para lectura directa del operario mediante smartphone en el campo.
 
 ---
@@ -55,4 +56,45 @@ sequenceDiagram
     Hub->>Gateway: Comando de riego al broker
     Gateway->>Nodo: Paquete LoRa de actuación
     Nodo->>Rele: Excita PIN GPIO (Cierra relé)
+```
+
+---
+
+## Diagrama de Topología y Cableado Físico (Nodo de Campo)
+
+El siguiente diagrama detalla la arquitectura de alimentación y cableado interno que se utiliza para un nodo de campo (Heltec V4 LoRa32) interactuando con instrumentación industrial (RS485).
+
+```mermaid
+flowchart TD
+    %% Alimentación y Energía
+    subgraph Energia [Sistema de Alimentación Autónomo]
+        Solar[Panel Solar 5V/6V] -->|Carga| TP4056[Módulo Carga TP4056]
+        TP4056 -->|BATT+ / GND| Bateria[Batería LiFePO4 / 18650]
+        Bateria -->|VCC 3.3V| LDO[Regulador LDO 3.3V]
+    end
+    
+    %% Cerebro de Procesamiento
+    subgraph Nodo [Caja Estanca IP67]
+        LDO -->|Alimentación 3.3V| MCU[Placa Heltec V4 LoRa32 / ESP32]
+        RS485[Módulo RS485 a TTL]
+        MCU <-->|UART (TX/RX)| RS485
+    end
+    
+    %% Instrumentos de Campo
+    subgraph Terreno [Instrumentación Industrial]
+        RS485 <-->|Cable Modbus A/B| NPK[Sonda NPK / CE / pH de Suelo]
+        MCU -.->|Pin GPIO| Rele[Módulo Relé Estado Sólido]
+    end
+    
+    %% Salida LoRa
+    MCU -.->|Antena SMA 915MHz| Lora(Radio LoRa P2P hacia Hub Central)
+
+    %% Estilos
+    classDef power fill:#fbd38d,stroke:#dd6b20,color:#000
+    classDef mcu fill:#9ae6b4,stroke:#38a169,color:#000
+    classDef sensor fill:#90cdf4,stroke:#3182ce,color:#000
+    
+    class Solar,TP4056,Bateria,LDO power
+    class MCU mcu
+    class RS485,NPK,Rele sensor
 ```

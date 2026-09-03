@@ -20,3 +20,38 @@ En el `docker-compose.yml`, el servicio se levanta como `hub_frontend_nginx`.
 
 ## Uso en desarrollo
 Cualquier cambio a las llamadas a la API debe considerar que FastAPI está expuesto en el puerto 8000. Si se desarrolla en modo *hot-reload* (fuera de Docker), el entorno Vite debe configurar proxies hacia `localhost:8000`.
+
+---
+
+## Diagrama de Jerarquía de Componentes Vue 3
+
+El frontend sigue una arquitectura basada en Composition API. El siguiente diagrama muestra la estructura de componentes principal y el flujo de datos unidireccional (props):
+
+```mermaid
+flowchart TD
+    A[AppLayout.vue\nLayout Base] --> B[Sidebar.vue\nNavegación Lateral]
+    A --> C[RouterView\nContenedor Dinámico de Vistas]
+    
+    C --> D[DashboardView.vue\nVista Principal '/']
+    C --> E[Map/OtherViews\nOtras Rutas]
+    
+    D --> F[SummaryCard.vue\nKPI: Humedad]
+    D --> G[SummaryCard.vue\nKPI: Temperatura]
+    D --> H[ChartComponent.vue\nGráfico Histórico Chart.js]
+    
+    %% Flujo de Datos y Conexión Backend
+    API[(FastAPI REST :8000)] -.->|HTTP GET /api/v1/summary| D
+    D -.->|Pasa datos vía Props| F
+    D -.->|Pasa datos vía Props| G
+    D -.->|Pasa historial vía Props| H
+    
+    classDef layout fill:#2b6cb0,stroke:#2a4365,color:#fff
+    classDef view fill:#319795,stroke:#285e61,color:#fff
+    classDef comp fill:#bee3f8,stroke:#3182ce,color:#000
+    classDef api fill:#4a5568,stroke:#2d3748,color:#fff
+    
+    class A,B,C layout
+    class D,E view
+    class F,G,H comp
+    class API api
+```

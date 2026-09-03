@@ -10,6 +10,7 @@ Cuando ingreses una idea en `Nuevas_Propuestas.md`, investiga lo siguiente:
 
 ## Evaluaciones de Competencia (MOC)
 - 👉 [[Analisis_SWAN_Systems]] - *Análisis detallado de plataforma SaaS Cloud enfocada en predicción de riego.*
+- 👉 [[Analisis_MeterGroup_ZL6]] - *Análisis de data logger ZL6 Pro y plataforma ZENTRA Cloud (Telemetría de Ecosistema Cerrado).*
 
 ## Evaluaciones Pendientes
 - **Módulo predictivo basado en ML:** Revisar si existen herramientas *open source* en Python que podamos integrar directamente al `Worker de Ingesta`.

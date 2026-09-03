@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "07_Componentes/Heltec_V4_LoRa32.md",
+                "file": "01_Planificacion_y_Tiempos/Tasks_Semanales.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Heltec_V4_LoRa32"
+              "title": "Tasks_Semanales"
             }
           }
         ]
@@ -188,6 +188,16 @@
   },
   "active": "7c860e15ac4da411",
   "lastOpenFiles": [
+    "05_Propuestas_y_Competencia/Analisis_MeterGroup_ZL6.md",
+    "04_Revisiones_y_Bitacora/Analisis_Avances_2026-09-02.md",
+    "01_Planificacion_y_Tiempos/Cronograma_General.md",
+    "01_Planificacion_y_Tiempos/Tasks_Semanales.md",
+    "03_Documentacion_Tecnica/Infraestructura_y_Graficos.md",
+    "04_Revisiones_y_Bitacora/Revision_Diagramas_2026-09-02.md",
+    "03_Documentacion_Tecnica/Hardware_y_Fisico.md",
+    "03_Documentacion_Tecnica/Arquitectura_Backend.md",
+    "03_Documentacion_Tecnica/Integracion_Frontend.md",
+    "07_Componentes/Heltec_V4_LoRa32.md",
     "02_Documentacion_General/Explicacion_del_Proyecto.md",
     "02_Documentacion_General/Guia_Electronica_Basica.md",
     "07_Componentes/Analizador_Lógico_24MHz.md",
@@ -197,7 +207,6 @@
     "07_Componentes/assets/gy33_tcs34725_back.png",
     "07_Componentes/Módulo_ESP32_CAM_OV3660.md",
     "07_Componentes/assets/gy33_tcs34725.png",
-    "03_Documentacion_Tecnica/Infraestructura_y_Graficos.md",
     "05_Propuestas_y_Competencia/Analisis_de_Competencia.md",
     "05_Propuestas_y_Competencia/Analisis_SWAN_Systems.md",
     "07_Componentes/Módulo_RS485_a_TTL_Auto_Flow.md",
@@ -212,23 +221,14 @@
     "07_Componentes/Módulo_TXS0108E_Conversor_Nivel.md",
     "07_Componentes/Módulo_LM2596_Step_Down_Voltimetro.md",
     "07_Componentes/Módulo_CP2102_USB_a_TTL.md",
-    "07_Componentes/Heltec_V4_LoRa32.md",
     "07_Componentes/Indice_de_Componentes.md",
     "07_Componentes/append_script.py",
     "07_Componentes/assets",
     "07_Componentes/Plantilla_Componente.md",
     "07_Componentes",
-    "03_Documentacion_Tecnica/Hardware_y_Fisico.md",
-    "03_Documentacion_Tecnica/Arquitectura_Backend.md",
-    "01_Planificacion_y_Tiempos/Tasks_Semanales.md",
-    "01_Planificacion_y_Tiempos/Cronograma_General.md",
     "05_Propuestas_y_Competencia/Nuevas_Propuestas.md",
-    "04_Revisiones_y_Bitacora/documentacion_2026-08-24.md",
     "Sin título.base",
     "Sin título.canvas",
-    "06_Negocio_y_Economia/Vision_y_Estrategia.md",
-    "06_Negocio_y_Economia/Modelo_Economico.md",
-    "03_Documentacion_Tecnica/Integracion_Frontend.md",
     "06_Negocio_y_Economia",
     "05_Propuestas_y_Competencia",
     "04_Revisiones_y_Bitacora",

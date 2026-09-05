@@ -13,6 +13,8 @@ Este espacio está destinado a documentar exhaustivamente todo el hardware físi
 ## 1. Inventario y Lista de Deseo (Bill of Materials)
 *(Haz clic en cada enlace para crear la nota del componente usando la [[Plantilla_Componente]] cuando lo vayas investigando)*
 
+![[Componentes.base]]
+
 ### Cerebro y Red Central
 - [[Mini PC Industrial]] (Ej. Intel N100 / AMD Ryzen)
 - [[Router 3G-4G IoT]]

@@ -1,0 +1,33 @@
+filters:
+  and:
+    - file.hasTag("componente")
+    - 'file.ext == "md"'
+
+formulas:
+  estado_icon: 'if(estado == "✅ RESUELTO", "✅", if(estado == "❌ FALTANTE", "❌", "❓"))'
+
+properties:
+  fabricante:
+    displayName: Fabricante
+  estado:
+    displayName: Estado
+  formula.estado_icon:
+    displayName: ""
+
+views:
+  - type: cards
+    name: "Galería de Componentes"
+    order:
+      - file.name
+      - fabricante
+      - estado
+
+  - type: table
+    name: "Inventario Técnico"
+    order:
+      - file.name
+      - fabricante
+      - estado
+    groupBy:
+      property: estado
+      direction: ASC

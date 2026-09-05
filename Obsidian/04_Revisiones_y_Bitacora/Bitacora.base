@@ -1,0 +1,19 @@
+filters:
+  and:
+    - file.inFolder("04_Revisiones_y_Bitacora")
+    - file.ext == "md"
+formulas:
+  fecha_mod: file.mtime.format("YYYY-MM-DD HH:mm")
+properties:
+  tipo:
+    displayName: Tipo Documento
+  formula.fecha_mod:
+    displayName: Última Modificación
+views:
+  - type: table
+    name: Registro de Bitácora
+    order:
+      - file.name
+      - tipo
+      - formula.fecha_mod
+    limit: 50

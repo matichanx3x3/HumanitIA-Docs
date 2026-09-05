@@ -1,9 +1,19 @@
+---
+title: "Documentación del Sistema: Hub Edge AI Agrícola"
+date: 2026-08-24
+tags:
+  - bitacora
+  - arquitectura
+  - documentacion
+tipo: "Documentación"
+---
 # Documentación del Sistema: Hub Edge AI Agrícola
 
 ## 1. Visión General
 El proyecto **Hub Edge AI Agrícola** es un sistema distribuido diseñado para la ingesta, almacenamiento, procesamiento y visualización de telemetría proveniente de dispositivos IoT (como ESP32) en entornos agrícolas. 
 
-Actualmente, el proyecto se encuentra en una etapa inicial (esqueleto/arquitectura base), definiendo los servicios principales orquestados mediante Docker Compose.
+> [!info] Estado Actual del Proyecto
+> Actualmente, el proyecto se encuentra en una etapa inicial (esqueleto/arquitectura base), definiendo los servicios principales orquestados mediante Docker Compose.
 
 ## 2. Arquitectura del Sistema
 El sistema se compone de cuatro capas principales que interactúan entre sí dentro de una red aislada de Docker (`hub_edge_network`).

@@ -1,0 +1,25 @@
+filters:
+  and:
+    - file.ext == "md"
+formulas:
+  tipo_doc: if(file.folder == "07_Componentes", "Hardware", if(file.folder == "04_Revisiones_y_Bitacora", "Bitácora", "Documentación"))
+  modificado: file.mtime.format("YYYY-MM-DD")
+properties:
+  tags:
+    displayName: Etiquetas
+  formula.tipo_doc:
+    displayName: Sección
+  formula.modificado:
+    displayName: Actualizado
+views:
+  - type: table
+    name: Explorador General
+    groupBy:
+      property: formula.tipo_doc
+      direction: ASC
+    order:
+      - file.name
+      - formula.tipo_doc
+      - tags
+      - formula.modificado
+    limit: 100

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "03_Documentacion_Tecnica/Arquitectura_Backend.md",
+                "file": "07_Componentes/Heltec_V4_LoRa32.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Arquitectura_Backend"
+              "title": "Heltec_V4_LoRa32"
             }
           }
         ]
@@ -188,6 +188,7 @@
   },
   "active": "7c860e15ac4da411",
   "lastOpenFiles": [
+    "03_Documentacion_Tecnica/Arquitectura_Backend.md",
     "04_Revisiones_y_Bitacora/Revision_Diagramas_2026-09-02.md",
     "04_Revisiones_y_Bitacora/documentacion_2026-08-24.md",
     "04_Revisiones_y_Bitacora/Analisis_Avances_2026-09-02.md",
@@ -203,7 +204,6 @@
     "02_Documentacion_General/Explicacion_del_Proyecto.md",
     "03_Documentacion_Tecnica/Infraestructura_y_Graficos.md",
     "03_Documentacion_Tecnica/Hardware_y_Fisico.md",
-    "03_Documentacion_Tecnica/Arquitectura_Backend.md",
     "04_Revisiones_y_Bitacora/Bitacora.base",
     "07_Componentes/Sensor_Suelo_7en1_RS485.md",
     "07_Componentes/Componentes.base",

@@ -1,39 +1,164 @@
 ---
 name: agritech-lora-mesh
 description: >-
-  Handles LoRa mesh communication, Heltec V4 LoRa32 node integration, serial port interfaces (Meshtastic API on Linux /dev/ttyUSB* and Windows COM*), channel configuration, packet crafting, and hardware telemetry injection. Use when working on LoRa communication, Heltec nodes, serial gateway, or testing field packet transmissions.
+  Handles native LoRa P2P communication using RadioLib (SX1262) on Heltec WiFi LoRa 32 V4 boards, serial port interfaces (pyserial on Linux /dev/ttyUSB* and Windows COM*), compact telemetry frame format, and the serial-to-MQTT gateway bridge. Use when working on LoRa communication, Heltec node firmware, serial gateway listener, or testing field packet transmissions.
 ---
 
-# LoRa Mesh & Heltec V4 Integration Runbook
+# LoRa P2P Native Communication & Heltec V4 Integration Runbook
 
-This skill covers the integration, testing, and operation of the LoRa Mesh network using **Heltec V4 LoRa32** nodes and the **Meshtastic** Python API.
+This skill covers the integration, testing, and operation of the **native LoRa P2P** network using **Heltec WiFi LoRa 32 V4** nodes, the **RadioLib** library (SX1262), and the Python serial gateway bridge.
 
-## Hardware & Connection Configuration
+> [!IMPORTANT]
+> **Meshtastic is NOT used in this project.** The architecture uses native LoRa P2P via RadioLib to keep payloads lightweight and enable Deep Sleep on field nodes. Do not introduce Meshtastic dependencies.
 
-- **Supported Boards**: Heltec WiFi LoRa 32 V3 / V4 (ESP32-S3 + SX1262).
-- **Serial Ports**:
-  - Linux / WSL: `/dev/ttyUSB0`, `/dev/ttyUSB1`, `/dev/ttyACM0`
-  - Windows: `COM3`, `COM7` (adjust depending on Device Manager)
-- **Meshtastic Channel Setup**:
-  - Primary Channel (`0`): Administrative / Network Mesh
-  - Secondary Channel (`1`): `"test"` or `"agritech"` - Used for sensor telemetry broadcasts to prevent polluting the default channel.
+## Hardware & RF Configuration
+
+### Supported Board: Heltec WiFi LoRa 32 V4 (ESP32-S3 + SX1262)
+
+#### Critical Pin Map (Heltec V4)
+
+| Pin | GPIO | Function | Notes |
+| :--- | :--- | :--- | :--- |
+| `LORA_NSS` | 8 | SPI Chip Select (SX1262) | |
+| `LORA_DIO1` | 14 | Radio Interrupt | |
+| `LORA_RST` | 12 | Radio Reset | |
+| `LORA_BUSY` | 13 | Radio Busy Status | |
+| `VEXT_PIN` | 36 | Power for OLED & RF stage | **ACTIVE LOW** — set LOW to power on |
+| `VFEM_PWR` | 7 | Front-End Module (GC1109) power | Set HIGH to enable |
+| `FEM_EN` | 2 | Front-End Module enable | Set HIGH to enable |
+| `FEM_CPS` | 46 | TX/RX antenna switch | Set HIGH |
+| `LED_PIN` | 35 | Onboard user LED | Active HIGH |
+| `OLED_SDA` | 17 | I2C Data (SSD1306/SSD1315) | |
+| `OLED_SCL` | 18 | I2C Clock | |
+| `OLED_RST` | 21 | OLED Reset | |
+
+#### Radio Parameters (RadioLib SX1262)
+
+| Parameter | Value |
+| :--- | :--- |
+| Frequency | **868.0 MHz** |
+| Bandwidth | 125.0 kHz |
+| Spreading Factor | 9 |
+| Coding Rate | 4/7 |
+| Sync Word | 0x12 |
+| TX Power | 14 dBm |
+
+RadioLib initialization call:
+```cpp
+int state = radio.begin(868.0, 125.0, 9, 7, 0x12, 14);
+```
+
+### Serial Port Configuration
+- **Baud Rate**: 115200 bps
+- **Linux / WSL**: `/dev/ttyUSB0`, `/dev/ttyUSB1`, `/dev/ttyACM0`
+- **Windows**: `COM3`, `COM7`, `COM8` (check Device Manager)
+
+## Architecture Flow
+
+```
+[Nodo Campo (Emisor)]                    [Gateway (Receptor)]
+  RadioLib SX1262 TX                       RadioLib SX1262 RX
+  firmware/emisor_nodo/                    firmware/receptor_gateway/
+         │                                          │
+         │  LoRa P2P (868 MHz, air)                 │
+         └──────────────────────────────────────────►│
+                                                    │ Serial.println(payload)
+                                                    ▼
+                                          [USB Serial Cable]
+                                                    │
+                                                    ▼
+                                      [lora_serial_listener.py]
+                                        pyserial + paho-mqtt
+                                                    │
+                                                    ▼ MQTT Publish
+                                        [Eclipse Mosquitto Broker]
+                                                    │
+                                                    ▼ Subscribe sensors/#
+                                        [mqtt_ingest.py → PostgreSQL]
+```
 
 ## Telemetry Payload Format
 
-The Agritech LoRa network encodes sensor metrics into concise text strings or JSON payloads:
+The LoRa network uses a compact text format with a `node_id|data` structure:
 
-### Compact String Format:
+### Frame Structure:
 ```text
-Temp:<float>C, Hum:<float>%, pH:<float>, EC:<float>, NPK:<N>-<P>-<K>
+<node_id>|Temp:<float>C, Hum:<float>%, pH:<float>, EC:<float>, NPK:<N>-<P>-<K>
 ```
-Example:
+
+### Example:
 ```text
-Temp:24.5C, Hum:62.3%, pH:6.8, EC:1.45, NPK:45-22-68
+nodo_campo_01|Temp:23.8C, Hum:58.4%, pH:6.5, EC:1.20, NPK:40-20-60
 ```
 
-## Running the LoRa Simulator / Injector
-
-```bash
-# Run simulator
-python heltec_lora_sim.py
+### Parsed JSON (by `lora_serial_listener.py` before publishing to MQTT):
+```json
+{
+  "temperature": 23.8,
+  "humidity": 58.4,
+  "ph": 6.5,
+  "soil_moisture": 1.2,
+  "nitrogen": 40,
+  "phosphorus": 20,
+  "potassium": 60
+}
 ```
+MQTT Topic: `sensors/<node_id>/telemetry`
+
+## Firmware Reference
+
+### Emisor (Field Node TX): `firmware/emisor_nodo/emisor_nodo.ino`
+- Generates and transmits a hardcoded test payload via `radio.transmit(payload)`.
+- Displays TX status, packet count, and last payload on OLED.
+- Uses `delay(10000)` in test mode; production should use `ESP.deepSleep()`.
+
+### Receptor (Gateway RX): `firmware/receptor_gateway/receptor_gateway.ino`
+- Listens continuously via `radio.startReceive()` with interrupt-driven reception (`setPacketReceivedAction`).
+- On packet received: reads data with `radio.readData()`, prints payload to Serial, and displays RSSI + packet count on OLED.
+- The Serial output is consumed by `lora_serial_listener.py`.
+
+## Python Scripts
+
+### LoRa Serial Simulator: `heltec_lora_sim.py`
+Connects to a Heltec board via USB Serial and writes simulated telemetry frames directly (useful for testing without a second board):
+
+```python
+import serial
+ser = serial.Serial('COM7', 115200, timeout=1)
+trama = f"esp32_sim|Temp:24.5C, Hum:62.3%, pH:6.8, EC:1.45, NPK:45-22-68\n"
+ser.write(trama.encode('utf-8'))
+```
+
+### Serial-to-MQTT Gateway: `lora_serial_listener.py`
+Reads frames from the Gateway Heltec RX board via Serial, parses the compact string format using regex, and publishes structured JSON to MQTT:
+
+```python
+import serial
+import paho.mqtt.client as mqtt
+
+ser = serial.Serial('COM8', 115200, timeout=1)
+client = mqtt.Client(client_id="lora_serial_gateway")
+client.connect("localhost", 1883, 60)
+
+# Reads lines, parses "node_id|Temp:...C, Hum:...%,..." via regex
+# Publishes JSON to sensors/{node_id}/telemetry
+```
+
+## Troubleshooting LoRa & Serial Issues
+
+1. **Port Permission Denied on Linux**:
+   ```bash
+   sudo usermod -a -G dialout $USER
+   sudo chmod 666 /dev/ttyUSB0
+   ```
+2. **Device Busy / In Use**:
+   - Close other tools that might hold the port open (Arduino IDE Serial Monitor, PlatformIO Monitor, Cura).
+3. **No Packets Received on Gateway**:
+   - Verify both boards use identical RF parameters (868.0 MHz, BW 125, SF 9, CR 4/7, SyncWord 0x12).
+   - Ensure `VEXT_PIN` is set to LOW and `VFEM_PWR`, `FEM_EN`, `FEM_CPS` are HIGH on both boards.
+   - Check antenna is connected (transmitting without antenna can damage the SX1262).
+4. **OLED Not Displaying**:
+   - Confirm I2C address `0x3C` via `Wire.beginTransmission(0x3C)`.
+   - Ensure `OLED_RST` (GPIO 21) is toggled LOW→HIGH during init.
+5. **Production Deep Sleep**:
+   - Replace `delay(10000)` with `ESP.deepSleep(microseconds)` in the emisor firmware for battery-powered field deployments.

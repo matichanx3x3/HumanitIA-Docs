@@ -43,3 +43,10 @@ When documenting new electronics, sensors, or modules in `Obsidian/07_Componente
    | `RX` / `RO` | Receive Data | Microcontroller TX |
 4. **Integration Code Snippet**: Minimal working driver or simulation example.
 5. **Safety / Level Shifting Notes**: E.g. TXS0108E bidirectional level shifter requirement between 5V sensors and 3.3V ESP32 inputs.
+
+## Syncing Project State & Milestones
+
+After completing features in `hub_agritech_core`:
+1. Check off completed items in `HumanitIA-Docs/Obsidian/01_Planificacion_y_Tiempos/Tasks_Semanales.md`.
+2. Update the architecture status in `HumanitIA-Docs/docs/Documentacion/handoff_context.md`.
+3. Keep `GEMINI.md` in `hub_agritech_core` in sync with the current roadmap and latest advances.

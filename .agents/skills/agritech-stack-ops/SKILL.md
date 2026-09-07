@@ -69,3 +69,17 @@ podman logs -f hub_mosquitto
   ```bash
   podman exec -it hub_postgres psql -U agritech_user -d agritech_db -c "SELECT COUNT(*) FROM sensor_data;"
   ```
+
+### 5. Troubleshooting & Healthcheck
+1. Check running containers:
+   ```bash
+   podman ps -a
+   ```
+2. Check internal network connectivity:
+   ```bash
+   podman network inspect hub_edge_network
+   ```
+3. Restart stuck services:
+   ```bash
+   podman restart hub_worker_ingesta hub_fastapi
+   ```

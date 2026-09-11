@@ -5,7 +5,7 @@ tags:
   - ficha-tecnica
   - comunicación
 fabricante: "Silicon Labs (Chip CP2102)"
-estado: "por investigar"
+estado: "adquirido"
 ---
 # Módulo Convertidor CP2102 (USB a UART TTL)
 

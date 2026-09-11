@@ -1,5 +1,7 @@
 ---
 tags:
+  - componente
+  - ficha-tecnica
   - hardware
   - herramienta
   - debug

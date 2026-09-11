@@ -6,7 +6,7 @@ tags:
   - gateway
   - esp32
 fabricante: "Heltec Automation"
-estado: "por investigar"
+estado: "adquirido"
 ---
 # Heltec V4 LoRa32 ESP32-S3 SX1262 (868MHz) OLED
 
@@ -75,7 +75,7 @@ Se incluyen dos tiras de pines macho que deben soldarse para usar en una protobo
 <iframe width="560" height="315" src="https://www.youtube.com/embed/jZ_y9N55g1o" title="Heltec LoRa32 Guide" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
-## Guía de Configuración y Desarrollo (Arduino IDE, PlatformIO y Meshtastic)
+## Guía de Configuración y Desarrollo (Arduino IDE, PlatformIO y RadioLib P2P)
 A continuación se detalla la guía de preparación y configuración para desarrollar con la placa Heltec WiFi LoRa 32 V4, basada en las recomendaciones de OpenELAB.
 
 ### 1. Consideraciones Iniciales de Hardware

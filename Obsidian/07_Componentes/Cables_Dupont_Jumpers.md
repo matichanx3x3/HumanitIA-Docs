@@ -1,9 +1,13 @@
 ---
 tags:
+  - componente
+  - ficha-tecnica
   - hardware
   - cables
   - dupont
   - prototipado
+fabricante: "Genérico"
+estado: "adquirido"
 ---
 
 # Cables Jumper Dupont (Macho-Macho, Macho-Hembra, Hembra-Hembra)

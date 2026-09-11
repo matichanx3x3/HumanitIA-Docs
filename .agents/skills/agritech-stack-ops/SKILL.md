@@ -23,6 +23,16 @@ This skill provides step-by-step instructions and runbooks for orchestrating the
 > [!IMPORTANT]
 > **Podman Rootless Port Rule**: Ports under 1024 (e.g., standard port 80) cannot be bound in rootless Podman/WSL environments without root privileges. The frontend is exposed on port **8081** and Postgres on host port **5435** to prevent binding conflicts.
 
+## Supported Host Platforms & macOS Exclusion
+
+> [!WARNING]
+> **macOS DESCARTADO / EXCLUIDO PARA EL STACK PODMAN**:
+> El entorno multi-contenedor de Podman **NO** está soportado en macOS. Podman Machine sobre macOS (QEMU / Apple Virtualization framework) genera fallos sistemáticos al montar volúmenes (`permission denied`, bloqueos de sockets gvproxy, fallos de sincronización virtiofs/9p y mapeos de red en Nginx y PostgreSQL).
+> 
+> **Plataformas Oficiales Requeridas y Soportadas:**
+> 1. **Linux Nativo (Plataforma Oficial - Mini PC Edge en finca):** Ubuntu 22.04+, Fedora 38+, Debian 12, Arch. Podman rootless opera con soporte nativo de namespaces del kernel.
+> 2. **Windows 10/11:** Utilizando WSL2 con distribución Linux (ej. Ubuntu).
+
 ## Common Operations
 
 ### 1. Starting the Entire Stack

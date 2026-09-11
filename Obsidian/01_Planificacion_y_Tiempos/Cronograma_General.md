@@ -26,4 +26,4 @@ Este documento rastrea los tiempos de planificación a gran escala del proyecto 
 ---
 
 ## Recursos Adjuntos Originales
-Los documentos originales de planeación en PDF se encuentran en la estructura original (`D:\Proyectos\hub_agritech_core\docs\Plan\Plan_Desarrollo_Gantt_Hub_AgritecA.pdf`). Puedes embeber o vincular el Gantt detallado en esta sección para su rápido acceso.
+Los documentos originales de planeación en PDF se encuentran en la carpeta de documentación del repositorio (`docs/Plan/Plan_Desarrollo_Gantt_Hub_AgritecA - Plan_Desarrollo_Gantt_Hub_AgritecA.pdf`). Puedes consultar o vincular el diagrama de Gantt detallado en esta sección para su rápido acceso.

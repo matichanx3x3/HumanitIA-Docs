@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "06_Negocio_y_Economia/BOM_Presupuesto_Hardware.md",
+                "file": "07_Componentes/Módulo_ESP32_CAM_OV3660.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "BOM_Presupuesto_Hardware"
+              "title": "Módulo_ESP32_CAM_OV3660"
             }
           }
         ]
@@ -188,11 +188,11 @@
   },
   "active": "7c860e15ac4da411",
   "lastOpenFiles": [
+    "06_Negocio_y_Economia/BOM_Presupuesto_Hardware.md",
     "03_Documentacion_Tecnica/Sistemas_de_Alertas.md",
     "05_Propuestas_y_Competencia/Hardware_All_In_One_LowCost.md",
     "03_Documentacion_Tecnica/Capacidad_Red_LoRa.md",
     "07_Componentes/Heltec_V4_LoRa32.md",
-    "06_Negocio_y_Economia/BOM_Presupuesto_Hardware.md",
     "04_Revisiones_y_Bitacora/Minuta_Reunion_2026-09-07.md",
     "03_Documentacion_Tecnica/Arquitectura_Backend.md",
     "04_Revisiones_y_Bitacora/Revision_Diagramas_2026-09-02.md",

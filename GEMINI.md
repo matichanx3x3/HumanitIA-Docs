@@ -11,6 +11,7 @@ Este archivo actúa como el **Project Knowledge** y **Reglas** para todos los ag
   1. **Bóveda Obsidian:** Todos los documentos en `Obsidian/` deben mantener enlaces tipo wikilink `[[Nota]]` o markdown estándar limpios.
   2. **Componentes Hardware:** Todo nuevo sensor, microcontrolador o módulo añadido en `Obsidian/07_Componentes/` debe seguir estrictamente la estructura definida en `Obsidian/07_Componentes/Plantilla_Componente.md`.
   3. **Trazabilidad:** Los diagramas arquitectónicos y PDFs en `docs/` son la fuente de verdad del diseño del sistema.
+  4. **Plataformas Soportadas:** El despliegue del stack Podman está delimitado exclusivamente a **Linux (Mini PC en campo / Servidor Edge)** y **Windows (WSL2)**. **macOS queda explícitamente descartado de los dispositivos requeridos** para montar Podman debido a fallos recurrentes de montaje de volúmenes y red en Podman Machine.
 
 ---
 
@@ -46,7 +47,7 @@ HumanitIA-Docs/
     ├── 04_Revisiones_y_Bitacora/     # Auditorías periódicas
     ├── 05_Propuestas_y_Competencia/  # Análisis de mercado
     ├── 06_Negocio_y_Economia/        # Modelos financieros y estrategia
-    ├── 07_Componentes/               # Fichas técnicas de hardware (13 componentes)
+    ├── 07_Componentes/               # Fichas técnicas de hardware (11 componentes documentados + índice y plantilla)
     └── Dashboard.base                # Vista base de Obsidian
 ```
 
@@ -78,6 +79,16 @@ Plantilla para nuevos componentes: `Plantilla_Componente.md`
 Este repositorio de documentación se mantiene sincronizado con el repositorio de código [`hub_agritech_core`](https://github.com/matichanx3x3/hub_agritech_core):
 
 - **Skills idénticos:** Las 6 skills en `.agents/skills/` deben ser copias exactas de las del Core. La fuente de verdad es siempre `hub_agritech_core/.agents/skills/`.
+- **Parámetros Oficiales LoRa RF (RadioLib SX1262):**
+  | Parámetro | Valor Oficial |
+  | :--- | :--- |
+  | Frecuencia | **868.0 MHz** (Banda EU / hardware Heltec V4) |
+  | Bandwidth | 125.0 kHz |
+  | Spreading Factor | 9 |
+  | Coding Rate | 4/7 |
+  | Sync Word | 0x12 |
+  | Potencia TX | 14 dBm |
+  | Chip | SX1262 (Heltec WiFi LoRa 32 V4) |
 - **Flujo de datos completo del sistema:**
   ```
   Firmware RadioLib (emisor_nodo.ino)

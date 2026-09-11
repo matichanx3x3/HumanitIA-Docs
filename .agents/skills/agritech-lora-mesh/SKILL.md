@@ -48,10 +48,14 @@ RadioLib initialization call:
 int state = radio.begin(868.0, 125.0, 9, 7, 0x12, 14);
 ```
 
-### Serial Port Configuration
+### Serial Port Configuration & Multiplatform Support
 - **Baud Rate**: 115200 bps
-- **Linux / WSL**: `/dev/ttyUSB0`, `/dev/ttyUSB1`, `/dev/ttyACM0`
-- **Windows**: `COM3`, `COM7`, `COM8` (check Device Manager)
+- **macOS (Darwin - Solo diagnóstico / firmware)**: `/dev/cu.usbmodem*` (Heltec V4 CDC), `/dev/cu.usbserial-*` (CP2102/CH340/FTDI).
+  > [!NOTE]
+  > macOS queda **descartado de los dispositivos requeridos para montar el stack Podman**. En macOS únicamente se realizan diagnósticos de hardware o pruebas locales. Siempre usar `/dev/cu.*` (Calling Unit) y no `/dev/tty.*`.
+- **Linux (Ubuntu / Fedora / Arch - Plataforma Oficial)**: `/dev/ttyUSB0`, `/dev/ttyACM0`. Requiere grupo `dialout` (o `uucp` en Arch) y reglas udev. Entorno nativo para el stack Podman.
+- **Windows (Host Nativo / WSL2)**: `COM3`, `COM7`, `COM8`. Acceso directo con Python en PowerShell/CMD sin privilegios adicionales. Stack Podman soportado bajo WSL2.
+- **Configurador Multiplataforma**: Ejecutar `bash setup_iot_permissions.sh` para diagnosticar y configurar permisos automáticamente según el SO.
 
 ## Architecture Flow
 
@@ -117,42 +121,45 @@ MQTT Topic: `sensors/<node_id>/telemetry`
 - On packet received: reads data with `radio.readData()`, prints payload to Serial, and displays RSSI + packet count on OLED.
 - The Serial output is consumed by `lora_serial_listener.py`.
 
-## Python Scripts
-
+## Python Scripts (Multiplataforma)
+ 
 ### LoRa Serial Simulator: `heltec_lora_sim.py`
-Connects to a Heltec board via USB Serial and writes simulated telemetry frames directly (useful for testing without a second board):
+Conecta a la placa Heltec emisora e inyecta tramas de telemetría simulada (útil para pruebas en laboratorio sin un segundo nodo):
+ 
+```bash
+# Auto-detecta el puerto según el SO (macOS /dev/cu.*, Linux /dev/ttyUSB*, Windows COM*)
+python heltec_lora_sim.py
 
-```python
-import serial
-ser = serial.Serial('COM7', 115200, timeout=1)
-trama = f"esp32_sim|Temp:24.5C, Hum:62.3%, pH:6.8, EC:1.45, NPK:45-22-68\n"
-ser.write(trama.encode('utf-8'))
+# O especificando puerto y baudrate manualmente
+python heltec_lora_sim.py --port /dev/cu.usbserial-0001 --interval 15
 ```
-
+ 
 ### Serial-to-MQTT Gateway: `lora_serial_listener.py`
-Reads frames from the Gateway Heltec RX board via Serial, parses the compact string format using regex, and publishes structured JSON to MQTT:
+Lee tramas de la placa Heltec RX (Gateway) por puerto serie, las parsea con regex y las publica como JSON estructurado al broker MQTT:
+ 
+```bash
+# Auto-detecta el puerto serie del receptor
+python lora_serial_listener.py
 
-```python
-import serial
-import paho.mqtt.client as mqtt
-
-ser = serial.Serial('COM8', 115200, timeout=1)
-client = mqtt.Client(client_id="lora_serial_gateway")
-client.connect("localhost", 1883, 60)
-
-# Reads lines, parses "node_id|Temp:...C, Hum:...%,..." via regex
-# Publishes JSON to sensors/{node_id}/telemetry
+# O indicando parámetros
+python lora_serial_listener.py --port /dev/cu.usbmodem1101 --broker localhost --mqtt-port 1883
 ```
-
+ 
+Publica hacia el tópico MQTT: `sensors/<node_id>/telemetry`.
+ 
 ## Troubleshooting LoRa & Serial Issues
-
-1. **Port Permission Denied on Linux**:
+ 
+1. **Permisos de Puerto Denegados (Linux)**:
    ```bash
-   sudo usermod -a -G dialout $USER
-   sudo chmod 666 /dev/ttyUSB0
+   bash setup_iot_permissions.sh
+   # O manualmente: sudo usermod -aG dialout $USER && sudo chmod 666 /dev/ttyUSB0
    ```
-2. **Device Busy / In Use**:
-   - Close other tools that might hold the port open (Arduino IDE Serial Monitor, PlatformIO Monitor, Cura).
+2. **Puerto bloqueado / 'Device or resource busy'**:
+   - En macOS: Asegurarse de usar `/dev/cu.*` y no `/dev/tty.*`.
+   - Cerrar cualquier monitor serial abierto (Arduino IDE, PlatformIO Serial Monitor, Cura, screen).
+3. **Hardware en Windows / WSL**:
+   - Para máxima estabilidad, ejecutar los scripts Python en el PowerShell nativo de Windows.
+   - Si se usa WSL2, recordar vincular el dispositivo con `usbipd attach --wsl --busid <BUSID>`.
 3. **No Packets Received on Gateway**:
    - Verify both boards use identical RF parameters (868.0 MHz, BW 125, SF 9, CR 4/7, SyncWord 0x12).
    - Ensure `VEXT_PIN` is set to LOW and `VFEM_PWR`, `FEM_EN`, `FEM_CPS` are HIGH on both boards.

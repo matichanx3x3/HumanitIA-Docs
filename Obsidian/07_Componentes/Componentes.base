@@ -4,7 +4,7 @@ filters:
     - 'file.ext == "md"'
 
 formulas:
-  estado_icon: 'if(estado == "✅ RESUELTO", "✅", if(estado == "❌ FALTANTE", "❌", "❓"))'
+  estado_icon: 'if(estado == "adquirido" || estado == "✅ RESUELTO", "✅", if(estado == "por investigar" || estado == "investigando", "🔍", if(estado == "❌ FALTANTE" || estado == "pendiente", "❌", "❓")))'
 
 properties:
   fabricante:

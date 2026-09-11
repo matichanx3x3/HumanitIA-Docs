@@ -28,7 +28,7 @@ Equipos hiper-económicos y de muy bajo consumo distribuidos por las hectáreas.
 - **Nodos de Visión:** Cámaras IP independientes que transmiten vía Wi-Fi direccional al hub central.
 
 ## 3. Capa de Comunicación Inalámbrica (Sin Internet)
-- **Red LoRa (Larga Distancia - Nativo P2P):** Módulos RF (915 MHz en LATAM, 868 MHz en Europa). Envían datos a kilómetros de distancia con un consumo ultra bajo. 
+- **Red LoRa (Larga Distancia - Nativo P2P):** Módulos RF a **868.0 MHz** (frecuencia operativa del hardware Heltec V4 adquirido / compatible con 915 MHz para despliegues en LATAM). Envían datos a kilómetros de distancia con un consumo ultra bajo. 
   - *Decisión Arquitectónica:* Se utiliza **LoRa Nativo Punto a Punto (P2P)** con la librería `RadioLib` en C++. **No se utiliza Meshtastic** debido a su alta sobrecarga de protocolo y dificultad para integrar lecturas directas de sensores industriales RS485 Modbus. El enfoque P2P permite a los nodos de campo entrar en Deep Sleep profundo y enviar telemetría directamente al Gateway (topología estrella).
 - **Bluetooth (Emergencia):** Integrado en nodos ESP32 para lectura directa del operario mediante smartphone en el campo.
 
@@ -46,7 +46,7 @@ sequenceDiagram
 
     Note over Campo, Nodo: Cable Eléctrico
     Campo->>Nodo: Lectura Analógica/Digital (Humedad, EC)
-    Note over Nodo, Gateway: Ondas LoRa (915 MHz)
+    Note over Nodo, Gateway: Ondas LoRa (868 MHz)
     Nodo->>Gateway: Transmisión de paquete encriptado
     Note over Gateway, Hub: Cable USB / Serial
     Gateway->>Hub: Ingesta a Broker MQTT y Postgres
@@ -87,7 +87,7 @@ flowchart TD
     end
     
     %% Salida LoRa
-    MCU -.->|Antena SMA 915MHz| Lora(Radio LoRa P2P hacia Hub Central)
+    MCU -.->|Antena 868MHz| Lora(Radio LoRa P2P hacia Hub Central)
 
     %% Estilos
     classDef power fill:#fbd38d,stroke:#dd6b20,color:#000

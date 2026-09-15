@@ -45,26 +45,38 @@ Este kit es especial porque consta de tres piezas fundamentales que facilitan en
 > Levanta con cuidado la pestaña negra del conector FPC de la ESP32-CAM. Inserta el cable flex de la OV3660 asegurándote de que los contactos metálicos del cable estén orientados hacia la placa PCB. Luego presiona la pestaña negra hacia abajo para asegurarlo. ¡Es frágil!
 
 ### Configuración en el Entorno de Desarrollo (Arduino IDE / PlatformIO)
-Dado que usas una cámara OV3660, **es crítico** que al correr los ejemplos clásicos (como `CameraWebServer`) modifiques el código para seleccionar tu modelo exacto.
-En el código fuente, comenta el modelo por defecto y descomenta la OV3660:
+Para la **ESP32-CAM (Ai-Thinker)** equipada con sensor **OV3660**, el mapeo de pines a nivel de hardware sigue siendo idéntico al estándar Ai-Thinker (`CAMERA_MODEL_AI_THINKER`). Sin embargo, el sensor OV3660 requiere calibración en los registros de sensor (`sensor_t`) para evitar imágenes invertidas o tintes cromáticos no deseados.
+
+> [!TIP] Firmware Oficial Listo para Usar
+> Hemos desarrollado un sketch autónomo y autocontenido con servidor web HTTP, streaming MJPEG fluido, captura de fotos y control de flash en:
+> `hub_agritech_core/firmware/nodo_camara_ov3660/nodo_camara_ov3660.ino`
+
+#### Parámetros Críticos del Compilador:
+- **Placa:** `AI Thinker ESP32-CAM`
+- **Partition Scheme:** `Huge APP (3MB No OTA/1MB SPIFFS)` *(Requerido para alojar el stack de cámara y servidor web)*.
+- **PSRAM:** Habilitada por defecto (en Arduino IDE v2 no aparece en el menú porque viene activada en `boards.txt` al elegir la placa `AI Thinker ESP32-CAM`).
+- **CPU Frequency:** `240 MHz`.
+
+#### Calibración del Sensor OV3660 tras `esp_camera_init`:
 ```cpp
-// #define CAMERA_MODEL_WROVER_KIT
-// #define CAMERA_MODEL_ESP_EYE
-// #define CAMERA_MODEL_M5STACK_PSRAM
-// #define CAMERA_MODEL_M5STACK_V2_PSRAM
-// #define CAMERA_MODEL_M5STACK_WIDE
-// #define CAMERA_MODEL_M5STACK_ESP32CAM
-// #define CAMERA_MODEL_M5STACK_UNITCAM
-// #define CAMERA_MODEL_AI_THINKER
-#define CAMERA_MODEL_OV3660 // <-- ¡Descomenta o agrega este perfil si existe!
+sensor_t * s = esp_camera_sensor_get();
+if (s != NULL) {
+    s->set_vflip(s, 1);        // Volteo vertical (evita imagen invertida)
+    s->set_hmirror(s, 0);      // Espejo horizontal
+    s->set_brightness(s, 1);   // Ajuste de brillo para interiores/campo
+    s->set_saturation(s, -1);  // Corrección cromática para balancear tintes
+    s->set_whitebal(s, 1);     // Balance de blancos automático
+    s->set_awb_gain(s, 1);
+}
 ```
-*(Nota: En algunos frameworks, el perfil `CAMERA_MODEL_AI_THINKER` sigue siendo válido para el mapeo de pines, pero debes inicializar el sensor especificando que es un OV3660).*
 
 ### Pinout Crítico
 La ESP32-CAM sufre de falta de pines libres porque la microSD y la cámara consumen casi todos los GPIOs.
-- **GPIO 4:** Controla el LED Flash de alta potencia.
-- **GPIO 33:** Controla el pequeño LED indicador rojo de la parte trasera.
+- **GPIO 4:** Controla el LED Flash blanco de alta potencia.
+- **GPIO 33:** Controla el pequeño LED indicador rojo de la parte trasera (Active LOW).
 - **Cuidado con los pines de la SD:** Si usas la tarjeta microSD en modo de 4 bits, perderás el acceso a los pines 4, 12, 13, 14, 15 y 2. Si necesitas pines libres (para sensores), debes inicializar la SD en modo "1-bit", lo que libera algunos pines pero reduce la velocidad de escritura.
 
 ## 4. Recursos y Multimedia
-- Este nodo es el candidato perfecto para integrarse con modelos TinyML entrenados en *Edge Impulse* para reconocimiento de enfermedades en hojas o conteo de frutos directamente en el campo.
+- Firmware de prueba y streaming: `hub_agritech_core/firmware/nodo_camara_ov3660/`
+- Este nodo es el candidato principal para integrarse con modelos TinyML entrenados en *Edge Impulse* para reconocimiento de estrés hídrico, enfermedades foliares o conteo de frutos directamente en el campo.
+

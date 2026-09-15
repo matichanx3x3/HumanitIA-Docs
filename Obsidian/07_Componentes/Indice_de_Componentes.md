@@ -26,6 +26,7 @@ Este espacio está destinado a documentar exhaustivamente todo el hardware físi
 ### Alimentación y Regulación
 - [[Módulo_LM2596_Step_Down_Voltimetro|Módulo LM2596 DC-DC Step Down con Voltímetro LED]]
 - [[Módulo_MT3608_Step_Up|Módulo MT3608 DC-DC Step-Up (Boost) con USB Type-C]]
+- **Fuente 12V DC (1A+) con Adaptador Jack Hembra a Bornera** (Alimentación dedicada para el sensor de suelo 7 en 1)
 
 ### Convertidores y Adaptadores
 - [[Módulo_CP2102_USB_a_TTL|Módulo Convertidor CP2102 (USB a UART TTL)]]
@@ -41,6 +42,7 @@ Este espacio está destinado a documentar exhaustivamente todo el hardware físi
 ### Accesorios y Herramientas
 - [[Cables_Dupont_Jumpers|Cables Jumper Dupont (M-M, M-H, H-H)]]
 - [[Analizador_Lógico_24MHz|Analizador Lógico USB 24MHz (8 Canales)]]
+- [[Guia_de_Testing_y_Puesta_en_Marcha|Guía de Testing y Puesta en Marcha (Runbook de Pruebas)]]
 
 ---
 

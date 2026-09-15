@@ -15,8 +15,9 @@
 - [x] **Implementar el Worker de Ingesta**
   Actualizar `app/workers/mqtt_ingest.py` para suscribirse al broker MQTT, recibir *payloads* del simulador y procesarlos para persistencia en BD vía SQLAlchemy.
 
-## Semana 4: Consolidación Serial y Tiempo Real (Actual)
+## Semana 4: Consolidación Serial, Hardware y Puesta en Marcha (Actual)
 - [x] **Refactorización Serial-LoRa P2P:** Migrar `heltec_lora_sim.py` y el listener para utilizar `pyserial` puro leyendo tramas nativas (RadioLib), eliminando la dependencia de `meshtastic` para cumplir la regla de bajo consumo.
-- [ ] **Detección Dinámica de Puertos:** Añadir soporte multiplataforma al script serial para autodetectar `/dev/ttyUSB*` (Linux) o `COM*` (Windows).
+- [x] **Detección Dinámica de Puertos:** Añadir soporte multiplataforma al script serial para autodetectar `/dev/ttyUSB*` / `/dev/ttyACM*` (Linux), `/dev/cu.*` (macOS) o `COM*` (Windows).
+- [x] **Integración Sensor Suelo 7-en-1 RS485 & Logger de Debug:** Firmware `emisor_nodo.ino` con auto-scan Modbus RTU (4800/9600), esquema de alimentación 12V externa con masa común (GND), script `lora_debug_logger.py` y [[Guia_de_Testing_y_Puesta_en_Marcha|Runbook de Testing]].
 - [ ] **WebSockets en Dashboard:** Implementar WebSockets en FastAPI y Vue 3 para actualizar las métricas interactivas (`SummaryCard`, gráficos) en tiempo real sin polling.
 - [ ] **Integración Geoespacial Base:** Habilitar el consumo de GeoJSON desde PostGIS para el mapa de parcelas en el frontend.

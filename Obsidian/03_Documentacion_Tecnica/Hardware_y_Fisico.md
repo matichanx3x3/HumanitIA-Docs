@@ -98,3 +98,35 @@ flowchart TD
     class MCU mcu
     class RS485,NPK,Rele sensor
 ```
+
+---
+
+### Esquema Pin a Pin: Heltec V4 LoRa32 + Módulo HW-726 + Sensor Suelo 7-en-1
+
+#### 1. Conexión Heltec V4 <--> Módulo HW-726 (Auto Flow Control)
+> [!CAUTION] ¡ALERTA DE CABLE JST CON COLORES INVERTIDOS!
+> En el conector de 4 hilos JST provisto con el HW-726 de fábrica, **el cable rojo corresponde a GND y el negro a VCC**. Guíate siempre de forma irrestricta por la **serigrafía impresa en el reverso de la placa**:
+
+| Pin HW-726 (Serigrafía Trasera) | Color Físico del Cable JST | Pin en Heltec V4 (Header J3) | Función / Nivel Lógico |
+| :--- | :--- | :--- | :--- |
+| **VCC** (Pin Superior) | **Negro** *(Cuidado)* | **`3V3`** (Pin 2 o 3 de J3) | Alimentación 3.3V (Garantiza lógica TTL segura para ESP32) |
+| **TXD** (2do Pin) | **Azul** | **`GPIO 4`** (Pin 15 de J3) | RX del microcontrolador (recibe datos del sensor) |
+| **RXD** (3er Pin) | **Amarillo** | **`GPIO 5`** (Pin 16 de J3) | TX del microcontrolador (envía consulta Modbus) |
+| **GND** (Pin Inferior) | **Rojo** *(Cuidado)* | **`GND`** (Pin 1 de J3) | Tierra común de referencia |
+
+#### 2. Conexión Fuente 12V <--> Sensor Suelo 7-en-1 <--> Módulo HW-726
+
+> [!CAUTION] ¡ALIMENTACIÓN AISLADA 12V Y TIERRA COMÚN (GND)!
+> El sensor requiere una **fuente externa de 12V DC** conectada mediante bornera jack. El polo **Negativo (-)** de la fuente de 12V debe unirse obligatoriamente con el pin **GND del Heltec V4** (Masa Común). Los 12V van **únicamente al cable Rojo del sensor**.
+
+| Origen | Terminal / Pin | Destino | Terminal / Pin | Función Eléctrica |
+| :--- | :--- | :--- | :--- | :--- |
+| **Fuente 12V** | Bornera Jack **`(+)`** | **Sensor Suelo** | **Cable Rojo** | 12V DC para encender la sonda y excitación de agujas |
+| **Fuente 12V** | Bornera Jack **`(-)`** | **Sensor Suelo** | **Cable Negro** | Retorno de corriente 12V del sensor |
+| **Fuente 12V** | Bornera Jack **`(-)`** | **Heltec V4** | **Pin `GND`** | **Tierra Común de Referencia (VITAL)** |
+| **Sensor Suelo** | **Cable Amarillo** | **Módulo HW-726** | **Bornera `A+`** | Señal diferencial RS485 A (D+) |
+| **Sensor Suelo** | **Cable Verde** | **Módulo HW-726** | **Bornera `B-`** | Señal diferencial RS485 B (D-) |
+
+Para consultar la guía detallada de puesta en marcha paso a paso, ver [[Guia_de_Testing_y_Puesta_en_Marcha|Guía de Testing y Puesta en Marcha]].
+
+

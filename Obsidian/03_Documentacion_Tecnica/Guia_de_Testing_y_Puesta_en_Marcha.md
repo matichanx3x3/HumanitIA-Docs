@@ -45,8 +45,8 @@ Esta guía detalla los pasos exactos, el instrumental necesario y las etapas pro
 Antes de energizar el circuito, revisa estrictamente los siguientes 5 puntos de seguridad:
 
 - [ ] **1. Antenas LoRa Conectadas:** Ambas placas Heltec V4 deben tener su antena conectada a la toma U.FL. *(Transmitir sin antena destruye el chip SX1262).*
-- [ ] **2. Cables Invertidos del HW-726:** El cable **Negro** del conector JST va al pin `3V3` del Heltec; el cable **Rojo** va a `GND`. *(Guiarse siempre por la serigrafía trasera del módulo).*
-- [ ] **3. Ubicación de Pines 4 y 5:** Los pines `GPIO 4` (RX) y `GPIO 5` (TX) en el Heltec V4 están situados en la parte **superior derecha** del header J3, al lado del conector de antena (no contar desde abajo).
+- [ ] **2. Alimentación 5V y Cables del HW-726:** El cable **Negro** del conector JST va al pin **`5V`** del Heltec (Header J2, Pin 2) porque el chip transceptor MAX485 requiere 5V para el bus diferencial; el cable **Rojo** va a `GND`.
+- [ ] **3. Ubicación de Pines GPIO 4 y 5:** Conectar el cable **Amarillo (RXD del módulo)** al `GPIO 4` (Header J3, Pin 15 / RX) y el cable **Azul (TXD del módulo)** al `GPIO 5` (Header J3, Pin 16 / TX). *(Evitar estrictamente los pines U0TXD y U0RXD del puerto USB)*.
 - [ ] **4. Tierra Común (GND):** El borne negativo `(-)` de la fuente externa de 12V debe estar puenteado con el pin `GND` del Heltec V4.
 - [ ] **5. Aislamiento de 12V:** La salida positiva `(+)` de la fuente de 12V va **exclusivamente** al cable Rojo del sensor de suelo. Jamás conectarla a pines del Heltec ni del HW-726.
 
@@ -71,11 +71,18 @@ Antes de energizar el circuito, revisa estrictamente los siguientes 5 puntos de 
 5. **Resultados Esperados:**
    - **En la Terminal:**
      ```text
-     ✔ Conectado exitosamente a /dev/cu.usbserial-0001 (o COM3 / /dev/ttyUSB0)
-     [2026-09-15 10:00:15] [#0001] [SENSOR 7-EN-1 OK] Hum: 48.2% | Temp: 22.1C | EC: 1120 uS/cm | pH: 6.7 | NPK: 38-19-55
+     ✔ Conectado exitosamente a /dev/cu.usbserial-0001 (o COM8 / /dev/ttyUSB0)
+     [2026-09-22 18:30:15] [#0001] [TELEMETRIA] Nodo: [nodo_campo_01]
+        ├─ Reg 0: Temperatura:          22.5 °C
+        ├─ Reg 1: Humedad de suelo:     45.0 %
+        ├─ Reg 2: Conductividad (EC):   800.0 µS/cm
+        ├─ Reg 3: Salinidad (Salt):     400.0 mg/L
+        ├─ Reg 4..6: Nutrientes NPK:    N=35 mg/kg | P=18 mg/kg | K=52 mg/kg
+        ├─ Reg 7: Acidez / Alcalinidad: pH 6.8
+        └─ RAW: nodo_campo_01|Temp:22.5C, Hum:45.0%, EC:800, Sal:400, NPK:35-18-52, pH:6.8
      ```
    - **En la Pantalla OLED del Heltec:**
-     Muestra en tiempo real `T: 22.1C  H: 48.2%` y `pH: 6.7  EC: 1120`.
+     Muestra en tiempo real `T:22.5C H:45.0%`, `EC:800 Sal:400` y `pH:6.8 NPK:35-18-52`.
    - **En el Archivo de Texto:**
      Se genera y actualiza en tiempo real `./sensor_debug_log.txt` con el historial de mediciones.
 
@@ -90,7 +97,7 @@ Antes de energizar el circuito, revisa estrictamente los siguientes 5 puntos de 
 ```
 
 ### Procedimiento:
-1. Mantén el nodo emisor encendido y transmitiendo cada 10 segundos.
+1. Mantén el nodo emisor encendido y transmitiendo cada 5 segundos.
 2. Flashea en la **segunda placa Heltec V4** el firmware `firmware/receptor_gateway/receptor_gateway.ino`.
 3. Conecta este Heltec Gateway por cable USB al ordenador.
 4. Ejecuta el logger apuntando al puerto del receptor:
@@ -98,10 +105,18 @@ Antes de energizar el circuito, revisa estrictamente los siguientes 5 puntos de 
    python lora_debug_logger.py
    ```
 5. **Resultados Esperados:**
-   - La pantalla OLED del Gateway muestra: `HELTEC V4 GATEWAY`, contador de paquetes `Pkts: <N>` y valor RSSI (ej: `-45 dBm`).
-   - El script captura la trama compacta entrante:
+   - La pantalla OLED del Gateway muestra: `HELTEC V4 GATEWAY`, contador de paquetes `Pkts: <N>`, valor RSSI (ej: `-45 dBm`), y los datos decodificados en vivo (`T`, `H`, `EC`, `Sal`, `NPK`, `pH`).
+   - El script captura el evento de recepción con RSSI/SNR y la trama compacta entrante:
      ```text
-     [2026-09-15 10:05:22] [#0001] nodo_campo_01|Temp:22.1C, Hum:48.2%, pH:6.7, EC:1120, NPK:38-19-55
+     [2026-09-22 18:35:10] [#0001] [GATEWAY INFO] -> [LORA RX #1] RSSI: -45.0 dBm | SNR: 9.5 dB
+     [2026-09-22 18:35:10] [#0002] [TELEMETRIA] Nodo: [nodo_campo_01]
+        ├─ Reg 0: Temperatura:          22.5 °C
+        ├─ Reg 1: Humedad de suelo:     45.0 %
+        ├─ Reg 2: Conductividad (EC):   800.0 µS/cm
+        ├─ Reg 3: Salinidad (Salt):     400.0 mg/L
+        ├─ Reg 4..6: Nutrientes NPK:    N=35 mg/kg | P=18 mg/kg | K=52 mg/kg
+        ├─ Reg 7: Acidez / Alcalinidad: pH 6.8
+        └─ RAW: nodo_campo_01|Temp:22.5C, Hum:45.0%, EC:800, Sal:400, NPK:35-18-52, pH:6.8
      ```
 
 ---
@@ -123,22 +138,79 @@ Antes de energizar el circuito, revisa estrictamente los siguientes 5 puntos de 
    ```bash
    python lora_serial_listener.py
    ```
+   **Salida en consola:**
+   ```text
+   [2026-09-22 18:36:00] [LORA RECEPTOR GATEWAY] -> Paquete recibido de [nodo_campo_01]
+      ├─ Reg 0: Temperatura:          22.5 °C
+      ├─ Reg 1: Humedad de suelo:     45.0 %
+      ├─ Reg 2: Conductividad (EC):   800.0 µS/cm
+      ├─ Reg 3: Salinidad (Salt):     400.0 mg/L
+      ├─ Reg 4..6: Nutrientes NPK:    N=35 mg/kg | P=18 mg/kg | K=52 mg/kg
+      ├─ Reg 7: Acidez / Alcalinidad: pH 6.8
+      └─> Publicado en MQTT -> Tópico: 'sensors/nodo_campo_01/telemetry'
+   ```
 3. **Verificación en Base de Datos:**
    - Accede a Adminer en tu navegador: `http://localhost:8080`.
    - Motor: **PostgreSQL** | Servidor: `db` | Usuario: `agritech_user` | Clave: `agritech_secret` | Base: `agritech_db`.
-   - Consulta la tabla `sensor_data` para ver los registros insertados con timestamp.
+   - Consulta la tabla `sensor_data` para ver los registros insertados con timestamp y las 8 variables agronómicas persistidas (`temperature`, `humidity`, `soil_moisture`, `ec`, `salinity`, `nitrogen`, `phosphorus`, `potassium`, `ph`).
 4. **Verificación en Dashboard:**
    - Abre `http://localhost:8081` para ver los gráficos en tiempo real actualizándose con las métricas de suelo.
 
 ---
 
-## 6. Guía de Solución de Problemas (Troubleshooting)
+## 6. Nivel 4: Test de Configuración Bidireccional (Downlink LoRa Clase A)
+
+**Objetivo:** Verificar que el tiempo de muestreo y transmisión del emisor físico a batería puede ser reprogramado remotamente por aire desde el Dashboard web sin reiniciar el nodo.
+
+```
+[Dashboard Web: 8081] ──(HTTP POST)──► [FastAPI: 8000] ──(MQTT downlink)──► [lora_serial_listener.py: Encolado]
+                                                                                   │
+                                                  ┌────────────────────────────────┘ (Al recibir telemetría)
+                                                  ▼
+[Emisor de Campo (Ventana RX 3s)] ◄──(LoRa Air)── [Receptor Gateway] ◄──(Serial USB)─┘
+       │
+       ├─► Guarda nuevo intervalo en Flash NVS (Preferences.h)
+       ├─► Muestra en pantalla OLED: "NUEVA CONF Int: Xs"
+       └─► Aplica nuevo ritmo de transmisión autónomo
+```
+
+### Procedimiento:
+1. Con los contenedores y `lora_serial_listener.py` activos, ingresa a `http://localhost:8081/devices`.
+2. Ubica el panel de tu nodo (ej. `nodo_campo_01`) y haz clic en **`⚙️ Configurar Sensor`**.
+3. Ajusta el deslizador a un nuevo intervalo (por ejemplo, `5 seg` o `60 seg`) y haz clic en **Aplicar Configuración**.
+4. Observa la consola de `lora_serial_listener.py`:
+   ```text
+   ⏳ [DOWNLINK ENCOLADO] Configuración encolada para [nodo_campo_01]: INTERVAL|60
+      El Gateway la transmitirá automáticamente en cuanto [nodo_campo_01] envíe su próximo reporte LoRa.
+   ```
+5. En el instante en que el emisor transmite su siguiente lectura:
+   ```text
+   🎯 [DOWNLINK SINCRONIZADO] Enviando comando a [nodo_campo_01] en su ventana de escucha: <nodo_campo_01|INTERVAL|60>
+      ✔ Comando enviado al Gateway para transmisión aérea hacia [nodo_campo_01]
+   ```
+6. **Verificación en el Emisor:**
+   - En la consola serial del Emisor:
+     ```text
+     ✔ [LORA RX OK] Paquete recibido por aire: <nodo_campo_01|INTERVAL|60>
+     ★ [CONFIG OK] ¡Nuevo intervalo guardado en Flash NVS!: 60 segundos
+     ```
+   - En la pantalla OLED del Emisor aparecerá temporalmente: **`NUEVA CONF Int: 60s`**.
+   - El nodo pasará a transmitir exactamente cada 60 segundos de forma continua y el valor persistirá tras apagar o reiniciar la placa.
+
+---
+
+## 7. Guía de Solución de Problemas (Troubleshooting)
 
 | Síntoma | Causa Probable | Solución |
 | :--- | :--- | :--- |
-| `0 bytes recibidos` o `Sin respuesta sensor` | Falta de energía o voltaje < 9V en el sensor | Verificar que la fuente de 12V esté conectada y entregue voltaje medible con multímetro. |
-| `0 bytes recibidos` persistente | Falta de masa común | Conectar firmemente el borne `(-)` de la fuente al `GND` del Heltec. |
+| `0 bytes recibidos` o `Sin respuesta sensor` | Falta de energía o voltaje < 9V en el sensor | Verificar que la fuente de 12V esté conectada y entregue voltaje medible con multímetro o voltímetro digital LM2596. |
+| `0 bytes recibidos` persistente | Falta de masa común | Conectar firmemente el borne `(-)` de la fuente al `GND` del Heltec V4. |
 | `0 bytes recibidos` | Cables RS485 A/B invertidos | Intercambiar los cables Amarillo y Verde en las borneras `A+` y `B-` del módulo HW-726. |
-| `0 bytes recibidos` | Pines UART equivocados | Verificar que el cable Azul del HW-726 vaya al pin marcado `4` y el Amarillo al `5` (arriba a la derecha). |
-| Destello de un solo LED en HW-726 | Baudrate incompatible | El firmware incluye auto-scan (4800/9600 bps). Espera dos ciclos para que alterne la velocidad. |
-| Gateway no recibe paquetes LoRa | Parámetros RF o antena | Confirmar que ambas placas usen 868.0 MHz y tengan `VEXT_PIN` en LOW y amplificadores en HIGH. |
+| `0 bytes recibidos` | Pines UART equivocados | Conectar cable Azul (`<--- TXD`) al GPIO 5 (TX Heltec) y Amarillo (`---> RXD`) al GPIO 4 (RX Heltec). |
+| Destello de un solo LED en HW-726 | Baudrate o esclavo incompatible | El firmware usa 9600 bps y dirección esclava 0x02 según Manual V2.2 oficial. |
+| Gateway no recibe paquetes LoRa | Parámetros RF o antena | Confirmar que ambas placas usen 868.0 MHz (SX1262) y tengan `VEXT_PIN` en LOW y amplificadores encendidos. |
+| Paquetes en OLED pero Python muestra `(Paquetes: 0)` | `USB CDC On Boot` deshabilitado | En Arduino IDE ir a **Tools -> USB CDC On Boot:** y seleccionar **"Enabled"**. Re-flashear el Gateway. |
+| Error `short-name did not resolve` en Podman WSL2 | Registries no definidos en Ubuntu | Ejecutar: `sudo bash -c 'cat <<EOF > /etc/containers/registries.conf\n[registries.search]\nregistries = ["docker.io", "quay.io"]\nEOF'` |
+| `404 Not Found` en NGINX al recargar página web | Configuración por defecto de NGINX en SPA | Resuelto con `frontend/nginx.conf` (`try_files $uri $uri/ /index.html;`). |
+| `Permission denied: '/dev/ttyS7'` en `lora_serial_listener.py` | Ejecución dentro de WSL2 sin puente USB | Ejecutar el listener nativamente en Windows PowerShell (`python lora_serial_listener.py --port COM4`). |
+| El sensor no actualiza su intervalo de envío | El emisor duerme y pierde el comando | Resuelto mediante la **cola sincronizada de downlink** en `lora_serial_listener.py` y ventana RX de 3s en el emisor. |

@@ -1,33 +1,27 @@
 filters:
   and:
     - file.hasTag("componente")
-    - 'file.ext == "md"'
-
+    - file.ext == "md"
 formulas:
-  estado_icon: 'if(estado == "adquirido" || estado == "✅ RESUELTO", "✅", if(estado == "por investigar" || estado == "investigando", "🔍", if(estado == "❌ FALTANTE" || estado == "pendiente", "❌", "❓")))'
-
+  estado_icon: if(estado == "adquirido" || estado == "✅ RESUELTO", "✅", if(estado == "por investigar" || estado == "investigando", "🔍", if(estado == "❌ FALTANTE" || estado == "pendiente", "❌", "❓")))
 properties:
   fabricante:
     displayName: Fabricante
   estado:
     displayName: Estado
-  formula.estado_icon:
-    displayName: ""
-
 views:
   - type: cards
-    name: "Galería de Componentes"
+    name: Galería de Componentes
     order:
       - file.name
       - fabricante
       - estado
-
   - type: table
-    name: "Inventario Técnico"
-    order:
-      - file.name
-      - fabricante
-      - estado
+    name: Inventario Técnico
     groupBy:
       property: estado
       direction: ASC
+    order:
+      - file.name
+      - fabricante
+      - estado

@@ -5,49 +5,56 @@ tags:
   - rs485
   - conversor
   - uart
-fabricante: "Genérico (HW-726 / Auto-flow)"
-estado: "adquirido"
+fabricante: "Genérico (HW-726 / Chip MAX485 con Auto-flow)"
+estado: "adquirido_y_validado"
 ---
-# Módulo Conversor TTL a RS485 (Auto Flow Control)
+# Módulo Conversor TTL a RS485 (Auto Flow Control - HW-726)
 
 ## 1. Descripción General y Uso
-Este módulo (frecuentemente marcado como HW-726) permite a un microcontrolador con puertos UART TTL (como el ESP32 en el Heltec V4) comunicarse con redes y sensores industriales que utilizan el protocolo RS485 (como los sensores de humedad y NPK de suelo).
+Este módulo (frecuentemente marcado como HW-726 o XY-017) permite a un microcontrolador con puertos UART TTL (como el ESP32-S3 en el Heltec V4) comunicarse con redes y sensores industriales que utilizan el protocolo RS485 (como los sensores de humedad, temperatura y NPK de suelo).
 
-La mayor ventaja de esta versión específica frente a los conversores MAX485 tradicionales es que incluye **Auto Flow Control (Control automático de flujo de dirección)**. En los módulos básicos se requieren pines adicionales (DE/RE) para decirle al chip cuándo transmitir y cuándo recibir. Este módulo detecta automáticamente la dirección del flujo de datos a través de su hardware interno, ahorrando pines GPIO en el microcontrolador y simplificando drásticamente el código de programación.
+La mayor ventaja de esta versión específica frente a los conversores MAX485 tradicionales es que incluye **Auto Flow Control (Control automático de flujo de dirección)** mediante una etapa de transistores. En los módulos básicos se requieren pines GPIO adicionales (`DE` y `/RE`) para decirle al chip cuándo transmitir y cuándo recibir. Este módulo conmuta automáticamente la dirección según detecta actividad en la línea de transmisión, ahorrando pines en el microcontrolador.
 
 ![RS485 a TTL Frontal](assets/rs485_ttl_front.png)
 
-## 2. Datos Técnicos
-- **Voltaje de Alimentación (VCC):** Amplio rango de **3.3V a 33V DC** (Cuenta con regulador integrado, haciéndolo compatible directamente con los 3.3V del ESP32 o fuentes de 12V/24V industriales).
-- **Nivel Lógico (TTL):** Compatible con señales lógicas de 3.3V y 5V.
-- **Protocolo Industrial:** RS-485 (Half-duplex, diferencial).
-- **Distancia de transmisión:** Hasta 1000 metros (dependiendo del tipo de cableado RS485 y ruido electromagnético).
-- **Topología de red:** Soporta conectar múltiples dispositivos en el mismo bus RS485 (Multidrop).
-- **Control de Dirección:** Automático (Hardware Auto-Flow). No requiere manipular pines de Enable.
+## 2. Datos Técnicos y Requisitos Eléctricos
+- **Chip Principal:** Transceptor diferencial **MAX485ESA**.
+- **Voltaje de Alimentación (VCC):** 
+  - Aunque la serigrafía trasera indica `3.3~33V VCC` gracias a un regulador LDO integrado, **el chip MAX485 requiere 5V nominales (mínimo 4.75V) para excitar con la potencia adecuada el bus diferencial RS485.**
+  - **Recomendación probada:** Alimentar directamente desde el pin **`5V` del Heltec V4** (Header J2, Pin 2, alimentado por USB-C).
+- **Nivel Lógico (TTL):** Compatible con señales lógicas de 3.3V del ESP32.
+- **Protocolo Industrial:** RS-485 (Half-duplex, diferencial $A+/B-$).
+- **Protección de Bus:** Incorpora fusibles rearmables PPTC (marcados "010 K") y diodos TVS de supresión de transitorios contra picos de tensión.
+- **Control de Dirección:** Automático por hardware (Auto-Flow).
 
-## 3. Guía de Conexión y Pinout
-El módulo viene con un conector JST de 4 pines pre-cableado. Basado en las imágenes de la parte trasera del módulo, el mapeo de colores exacto de tu cable es:
+## 3. Guía de Conexión y Pinout Validado
+
+El módulo incluye un conector JST de 4 pines pre-cableado con código de colores invertido respecto a la norma convencional.
 
 ![RS485 a TTL Trasera](assets/rs485_ttl_back.png)
 
-### Lado del Microcontrolador (Cable de 4 hilos JST)
-> [!CAUTION] ¡PELIGRO DE COLORES INVERTIDOS!
-> El cable JST incluido de fábrica viene con un código de colores que **viola el estándar**. Como notaste correctamente en la placa física, el cable rojo está en GND y el cable negro en VCC. **Fíate SIEMPRE de la serigrafía de la placa trasera y no de la intuición de los colores.**
+### Lado Microcontrolador (Cable JST de 4 hilos)
 
-| Pin Módulo (Serigrafía Trasera) | Color del Cable Físico | Conexión al Microcontrolador (Heltec V4) | Notas                                                     |
-| :------------------------------ | :--------------------- | :--------------------------------------- | :-------------------------------------------------------- |
-| **VCC** (Pin Superior)          | **Negro**              | 3.3V o 5V                                | Alimentación del módulo. *(Cuidado, es negro)*            |
-| **TXD** (2do Pin)               | **Azul**               | Pin RX del ESP32                         | **¡Importante!** El pin TX del módulo va al RX del ESP32. |
-| **RXD** (3er Pin)               | **Amarillo**           | Pin TX del ESP32                         | El pin RX del módulo va al TX del ESP32.                  |
-| **GND** (Pin Inferior)          | **Rojo**               | GND (Tierra común)                       | Cerrar el circuito. *(Cuidado, es rojo)*                  |
+> [!CAUTION] ¡CÓDIGO DE COLORES Y FLECHAS DE LA SERIGRAFÍA TRASERA!
+> 1. **Colores invertidos:** El cable Rojo físico está en el pin `GND` y el cable Negro está en `VCC`.
+> 2. **Sentido de las flechas (`接线图`):** El fabricante rotuló las patillas indicando la función del microcontrolador externo:
+>    * `TXD <--- TXD` (Cable Azul): Es una **entrada** al módulo; debe conectarse al pin **TX** del microcontrolador.
+>    * `RXD ---> RXD` (Cable Amarillo): Es una **salida** del módulo; debe conectarse al pin **RX** del microcontrolador.
 
-### Lado Industrial (Borneras RS485)
-- **A+ (A / D+)**: Conectar al cable de señal `A` o `D+` del sensor RS485.
-- **B- (B / D-)**: Conectar al cable de señal `B` o `D-` del sensor RS485.
-- **Earth (Tierra / Malla)**: Pin opcional para conectar la malla de apantallamiento de cables RS485 de larga distancia (ayuda a drenar ruido a tierra física).
+| Pin Serigrafía Trasera | Color Cable Físico | Conexión en Heltec V4 | Función Eléctrica |
+| :--- | :--- | :--- | :--- |
+| **VCC** (Pin Superior) | **Negro** | **Pin `5V`** (Header J2, Pin 2) | Alimentación 5V requerida por el MAX485. |
+| **TXD** (2do Pin) | **Azul** | **GPIO 5** (Header J3, Pin 16 / TX) | Entrada de datos que el ESP32 envía al bus. |
+| **RXD** (3er Pin) | **Amarillo** | **GPIO 4** (Header J3, Pin 15 / RX) | Salida de datos que el módulo entrega al ESP32. |
+| **GND** (Pin Inferior) | **Rojo** | **Pin `GND`** (Cualquiera del Heltec) | Masa de referencia lógica. |
 
-> [!TIP] Uso con Modbus-RTU
-> Ya que este módulo maneja el control de flujo automáticamente, al programar la lectura de tus sensores NPK usando librerías de `ModbusMaster` en Arduino/PlatformIO, no necesitas configurar las funciones `preTransmission` y `postTransmission` que habitualmente cambian los pines DE/RE a HIGH o LOW. Simplemente envías los datos por `Serial.write()`.
+### Lado Industrial (Borneras de Tornillo RS485)
+- **Bornera `A+`**: Conectar al cable **Amarillo** del sensor RS485 (Señal D+).
+- **Bornera `B-`**: Conectar al cable **Verde** del sensor RS485 (Señal D-).
+- **Bornera `接大地` (Earth)**: Terminal opcional para drenar la malla de apantallamiento de cables de campo largos a tierra física.
 
-## 4. Recursos y Referencias
-Este componente elimina una gran barrera de entrada al IoT industrial, ya que vuelve la comunicación RS485 totalmente transparente para el ESP32, operando exactamente igual que si estuvieras usando un simple puerto Serial estándar.
+## 4. Diagnóstico Visual con LEDs Integrados
+El módulo incorpora dos indicadores LED de actividad:
+* **LED `TXD`:** Parpadea cuando el microcontrolador transmite una petición hacia el sensor (indica que el pin TX del ESP32 está excitando el módulo).
+* **LED `RXD`:** Parpadea cuando el sensor de campo devuelve una respuesta hacia el microcontrolador.
+*(En reposo normal, ambos LEDs permanecen apagados).*

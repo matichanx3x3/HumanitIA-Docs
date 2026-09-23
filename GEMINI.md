@@ -89,18 +89,30 @@ Este repositorio de documentación se mantiene sincronizado con el repositorio d
   | Sync Word | 0x12 |
   | Potencia TX | 14 dBm |
   | Chip | SX1262 (Heltec WiFi LoRa 32 V4) |
-- **Flujo de datos completo del sistema:**
+- **Flujo de datos completo del sistema (Uplink y Downlink Clase A):**
   ```
-  Firmware RadioLib (emisor_nodo.ino)
+  [Telemetría Uplink]:
+  Sensor Suelo 7-en-1 RS485 Modbus (9600 bps, Dir 02)
+       → Firmware RadioLib (emisor_nodo.ino)
        → LoRa P2P (868 MHz, SX1262)
        → Firmware RadioLib (receptor_gateway.ino)
-       → USB Serial
+       → USB Serial (COM / ttyUSB)
        → lora_serial_listener.py (pyserial → MQTT)
        → Eclipse Mosquitto Broker
        → mqtt_ingest.py (paho-mqtt → SQLAlchemy)
        → PostgreSQL 15 (PostGIS + pgvector)
        → FastAPI REST API (/api/v1/...)
        → Vue 3 Dashboard (Chart.js, Vanilla CSS)
+
+  [Configuración Remota Downlink]:
+  Vue 3 Dashboard (Modal slider de intervalo 1s - 12h)
+       → POST /api/v1/sensors/{node_id}/config
+       → MQTT: sensors/{node_id}/downlink ("INTERVAL|valor")
+       → lora_serial_listener.py (Encolamiento sincronizado con ventana RX)
+       → USB Serial (inyección durante ventana de 3s post-TX)
+       → receptor_gateway.ino (TX aéreo LoRa P2P)
+       → emisor_nodo.ino (RX por interrupción LORA_DIO1)
+       → Persistencia en Flash NVS (Preferences.h) y ajuste de ciclo
   ```
 - **Documentos de referencia cruzada:**
   - `docs/Documentacion/handoff_context.md` — Estado y contexto de traspaso del proyecto.

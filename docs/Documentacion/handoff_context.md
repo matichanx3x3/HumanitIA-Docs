@@ -36,22 +36,39 @@ Este documento sirve como resumen completo del progreso, decisiones arquitectón
 - **Bridge Serial-a-MQTT:** `lora_serial_listener.py` escucha el puerto USB serial con `pyserial`, valida las tramas crudas recibidas por el Heltec receptor y las publica al broker Mosquitto.
 - **Simulador Serial:** `heltec_lora_sim.py` para pruebas del gateway serial sin necesidad de conectar el microcontrolador físico.
 
+### Integración y Validación de Hardware de Campo (Completado)
+- **Sensor Suelo Multiparamétrico RS485 Modbus-RTU:** Integrado y validado en vivo con el nodo Heltec V4 (`firmware/emisor_nodo/emisor_nodo.ino`) y módulo transceptor HW-726 (MAX485).
+- **Calibración con Manual Oficial V2.2 y Salinidad Agronómica:** Protocolo ajustado a 9600 bps (8N1), dirección de esclavo de fábrica `0x02` (broadcast `0x00`), trama de consulta de 8 registros (`02 03 00 00 00 08 44 3F`) con lectura en vivo de Temperatura, Humedad, Conductividad, Salinidad, NPK y pH. En sondas 7-en-1 físicas (cuyo Reg 3 viene en `0x0000`), el firmware y pipeline derivan automáticamente la salinidad desde la EC (factor oficial $0.5$, $\text{Sal} = \text{EC} \times 0.5$).
+- **Topología Eléctrica Homologada:** Masa común (puente negativo fuente 12V hacia GND Heltec), 5V para excitador MAX485 y pines asignados en Header J3 (GPIO 4 / Pin 15 RX, GPIO 5 / Pin 16 TX).
+- **USB CDC On Boot y Resiliencia Serial:** Resuelto el streaming serial en ESP32-S3 activando `USB CDC On Boot: Enabled`, configurando `DTR=True`/`RTS=False` y forzando codificación UTF-8 en Windows para evitar excepciones `cp1252`.
+- **Pipeline de Telemetría Completo de 8 Parámetros:**
+  - Firmware Emisor (`emisor_nodo.ino`): Log detallado de los 8 registros Modbus, cálculo agronómico de salinidad y transmisión LoRa P2P.
+  - Firmware Gateway (`receptor_gateway.ino`): Pantalla OLED con los 8 parámetros agronómicos y emisión serial con RSSI/SNR (`Serial.flush()`).
+  - Scripts Python (`lora_serial_listener.py`, `lora_debug_logger.py`): Despliegue estructurado en árbol de los 8 registros, soporte de espacios y derivación defensiva de salinidad.
+  - Base de Datos y API: Modelo `SensorData`, worker `mqtt_ingest.py` y endpoints `/api/v1/sensors/summary` actualizados para persistir e ingerir `ec`, `salinity`, `nitrogen`, `phosphorus`, `potassium`, `ph`, `temperature`, `humidity`.
+- **Soporte Multiplataforma de Hardware y Puertos Serie (Completado):** Autodetección dinámica de puertos seriales por VID/PID (Espressif, CP210x, CH340, FTDI) en Linux (`/dev/ttyUSB*`), macOS (`/dev/cu.*`) y Windows (`COM*`).
+- **Downlink LoRa P2P Bidireccional Sincronizado (Completado):**
+  - Implementación de arquitectura estilo *LoRaWAN Clase A*: el nodo emisor (`emisor_nodo.ino`) abre una ventana de escucha RX de 3 segundos justo después de transmitir (`LORA_DIO1`).
+  - Persistencia de configuración en memoria Flash NVS del ESP32 (`Preferences.h`), garantizando que el intervalo de muestreo sobreviva a reinicios y al Deep Sleep (arranque por defecto en 15 segundos).
+  - Cola de comandos pendientes (`pending_downlinks`) en `lora_serial_listener.py`, que retiene las instrucciones de la web y las transmite por aire vía Gateway justo cuando el nodo abre su ventana de recepción.
+
 ### Backend API y Frontend (Completado)
-- API FastAPI en `app/main.py` con CORS habilitado y endpoints REST `/api/v1/` (`summary`, `history`, `nodes`, `health`).
-- Frontend Vue 3 en `frontend/` con componentes `AppLayout`, `Sidebar`, `SummaryCard`, gráficos históricos Chart.js y sistema de diseño en CSS puro (`src/assets/main.css`).
+- **API FastAPI Extendida:** Endpoints `/api/v1/sensors/summary` y `/api/v1/sensors` con `last_seen`, `/api/v1/sensors/{node_id}/config` para downlink por MQTT, `/api/v1/sensors/export` para telemetría cruda en CSV, y `/api/v1/sensors/purge/dummy` para limpieza de registros de prueba.
+- **Frontend Vue 3 Renovado:**
+  - **Overview (`DashboardView.vue`):** Resumen ejecutivo con tarjetas compactas de sensores activos, estado en línea/inactivo y signos vitales mínimos.
+  - **Sensores y Dispositivos (`DevicesView.vue`):** Paneles detallados con los 8 parámetros oficiales completos, modal de configuración remota con slider continuo (1s a 12h) y advertencia de batería, exportación a CSV/PDF y purga de nodos dummy.
+  - **Detalle e Históricos (`DeviceDetailView.vue`):** Selector de 9 métricas agronómicas en gráficos de líneas, barras y tabla histórica.
+  - **Solución NGINX SPA:** Incorporación de `frontend/nginx.conf` (`try_files $uri $uri/ /index.html;`) resolviendo de forma permanente el error 404 al recargar páginas.
+- **Infraestructura Podman / WSL2 Consolidada:** Desactivación del simulador en `docker-compose.yml`, configuración de registries en Ubuntu WSL2 (`/etc/containers/registries.conf`), y manejo de `SIGTERM` limpio en `mqtt_ingest.py`.
 
 ---
 
 ## 3. Trabajo Pendiente (Próximos Pasos)
 
-1. **Soporte Multiplataforma para el Listener Serial:**
-   - Implementar autodetección dinámica del puerto serie (`/dev/ttyUSB*` o `/dev/ttyACM*` en Linux/macOS y `COM*` en Windows).
-2. **WebSockets o Polling en Dashboard:**
-   - Vincular el flujo en tiempo real de la API al frontend para actualizar las métricas de `SummaryCard` y gráficos sin recargar la página.
-3. **Capas Geoespaciales PostGIS:**
+1. **Capas Geoespaciales PostGIS:**
    - Generar endpoints GeoJSON y visualización de polígonos/parcelas en el mapa del Dashboard.
-4. **Validación con Sensores Reales de Campo:**
-   - Integrar la lectura Modbus-RTU RS485 del Sensor 7-en-1 en `emisor_nodo.ino` a través del módulo HW-726.
+2. **Alertas Agronómicas Inteligentes:**
+   - Reglas umbral automáticas (ej. alerta por pH ácido < 5.5 o EC elevada > 2000 µS/cm) integradas con notificaciones en el frontend.
 
 ---
 

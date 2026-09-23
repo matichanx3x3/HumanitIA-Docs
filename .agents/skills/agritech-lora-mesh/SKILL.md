@@ -81,45 +81,60 @@ int state = radio.begin(868.0, 125.0, 9, 7, 0x12, 14);
                                         [mqtt_ingest.py → PostgreSQL]
 ```
 
-## Telemetry Payload Format
+## Telemetry Payload Format (8 Registros Modbus Oficiales)
 
-The LoRa network uses a compact text format with a `node_id|data` structure:
+The LoRa network uses a compact text format with a `node_id|data` structure based on the official Manual V2.2:
 
 ### Frame Structure:
 ```text
-<node_id>|Temp:<float>C, Hum:<float>%, pH:<float>, EC:<float>, NPK:<N>-<P>-<K>
+<node_id>|Temp:<float>C, Hum:<float>%, EC:<float>, Sal:<float>, NPK:<N>-<P>-<K>, pH:<float>
 ```
 
 ### Example:
 ```text
-nodo_campo_01|Temp:23.8C, Hum:58.4%, pH:6.5, EC:1.20, NPK:40-20-60
+nodo_campo_01|Temp:22.5C, Hum:45.0%, EC:800, Sal:400, NPK:35-18-52, pH:6.8
 ```
+
+> [!NOTE]
+> **Derivación Agronómica de Salinidad**: Si una sonda física 7-en-1 retorna `0` en el Registro 3 (Sal) con `EC > 0`, tanto el firmware como el listener derivan automáticamente la salinidad con la fórmula oficial: $\text{Sal} = \text{EC} \times 0.5$.
 
 ### Parsed JSON (by `lora_serial_listener.py` before publishing to MQTT):
 ```json
 {
-  "temperature": 23.8,
-  "humidity": 58.4,
-  "ph": 6.5,
-  "soil_moisture": 1.2,
-  "nitrogen": 40,
-  "phosphorus": 20,
-  "potassium": 60
+  "temperature": 22.5,
+  "humidity": 45.0,
+  "soil_moisture": 45.0,
+  "ec": 800.0,
+  "salinity": 400.0,
+  "nitrogen": 35,
+  "phosphorus": 18,
+  "potassium": 52,
+  "ph": 6.8
 }
 ```
 MQTT Topic: `sensors/<node_id>/telemetry`
 
+## Bidirectional LoRa P2P (Class A Downlink)
+
+Para modificar remotamente el intervalo de muestreo del nodo emisor sin sacrificar batería:
+1. **Frontend / API:** Envía `INTERVAL|<segundos>` hacia MQTT `sensors/<node_id>/downlink`.
+2. **Listener Gateway:** Encola el comando en `pending_downlinks[node_id]`.
+3. **Sincronización:** Cuando el nodo emisor transmite su telemetría y abre su **ventana de recepción de 3 segundos** (`LORA_DIO1`), el Gateway transmite inmediatamente el comando `<node_id|INTERVAL|<segundos>>`.
+4. **Persistencia Flash (NVS):** El emisor recibe el comando, lo guarda en memoria permanente (`Preferences.h`) y ajusta su ciclo de lectura.
+
 ## Firmware Reference
 
-### Emisor (Field Node TX): `firmware/emisor_nodo/emisor_nodo.ino`
-- Generates and transmits a hardcoded test payload via `radio.transmit(payload)`.
-- Displays TX status, packet count, and last payload on OLED.
-- Uses `delay(10000)` in test mode; production should use `ESP.deepSleep()`.
+### Emisor (Field Node TX/RX): `firmware/emisor_nodo/emisor_nodo.ino`
+- Lee en vivo los 8 registros del sensor de suelo RS485 Modbus a 9600 bps (Dirección esclava `0x02`).
+- Transmite telemetría vía `radio.transmit(payload)` a 868.0 MHz.
+- Inmediatamente abre una ventana de escucha RX de 3 segundos esperando downlinks antes de dormir.
+- Persistencia en Flash NVS (`Preferences.h`) para conservar el intervalo entre reinicios y Deep Sleep. Arreglo por defecto en 15 segundos para pruebas.
 
-### Receptor (Gateway RX): `firmware/receptor_gateway/receptor_gateway.ino`
-- Listens continuously via `radio.startReceive()` with interrupt-driven reception (`setPacketReceivedAction`).
-- On packet received: reads data with `radio.readData()`, prints payload to Serial, and displays RSSI + packet count on OLED.
-- The Serial output is consumed by `lora_serial_listener.py`.
+### Receptor (Gateway RX/TX): `firmware/receptor_gateway/receptor_gateway.ino`
+- Escucha permanentemente en `radio.startReceive()` con interrupciones (`setPacketReceivedAction`).
+- Entrega las tramas recibidas por USB Serial al PC y muestra métricas completas y RSSI en OLED.
+- Monitorea `Serial.available()` para transmitir inmediatamente comandos downlink hacia los nodos.
+
 
 ## Python Scripts (Multiplataforma)
  

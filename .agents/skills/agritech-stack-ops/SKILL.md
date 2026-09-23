@@ -93,3 +93,15 @@ podman logs -f hub_mosquitto
    ```bash
    podman restart hub_worker_ingesta hub_fastapi
    ```
+4. **Ubuntu WSL2 "short-name did not resolve" error:**
+   If `podman-compose` fails to find images with short names, configure default registries in `/etc/containers/registries.conf`:
+   ```bash
+   sudo bash -c 'cat <<EOF > /etc/containers/registries.conf
+   [registries.search]
+   registries = ["docker.io", "quay.io"]
+   EOF'
+   ```
+5. **Frontend 404 Not Found on Route Refresh:**
+   Vue Router HTML5 history mode requires NGINX to route all requests back to `index.html`. This is handled automatically by `frontend/nginx.conf` using `try_files $uri $uri/ /index.html;`.
+6. **Graceful Shutdown (Worker MQTT SIGTERM):**
+   `app/workers/mqtt_ingest.py` implements OS signal handling (`SIGTERM`/`SIGINT`) to cleanly disconnect and stop the MQTT loop before timeout.
